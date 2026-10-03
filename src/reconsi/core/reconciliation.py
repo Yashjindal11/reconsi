@@ -13,6 +13,8 @@ import pandas as pd
 
 from reconsi._version import __version__
 from reconsi.aggregation.aggregate import default_aggregations
+from reconsi.aggregation.diagnosis import aggregation_diagnosis
+from reconsi.aggregation.grain import compare_grains, infer_grain
 from reconsi.backends import make_backend
 from reconsi.backends.base import OCCURRENCE, ROW_COUNT, SIDES, Side, TableBackend
 from reconsi.comparison.records import STATUS, RecordAccumulator
@@ -30,6 +32,7 @@ from reconsi.schema.compare import diff_schemas
 from reconsi.schema.inspect import ColumnSchema, TableSchema
 
 HEAD_ROWS = 10_000
+GRAIN_SAMPLE_ROWS = 200_000
 
 # Shortcut keyword arguments that configure ``defaults`` (all columns).
 _DEFAULT_OPTION_NAMES = (
@@ -149,6 +152,7 @@ class _Run:
         self.right = right
         self.b = backend
         self.notes: list[dict[str, Any]] = []
+        self.analyses: dict[str, Any] = {}
 
     def note(self, kind: str, message: str, **data: Any) -> None:
         self.notes.append({"kind": kind, "message": message, **data})
@@ -194,6 +198,8 @@ class _Run:
             suggest=cfg.suggest_columns,
         )
         left_rows, right_rows = b.row_count("left"), b.row_count("right")
+        self.analyses["control_totals"] = self._control_totals(keys, left_rows, right_rows)
+        self.analyses["grain"] = self._grain(keys)
 
         self._apply_grain(keys)
         compare = self._compare_columns(keys)
@@ -203,6 +209,18 @@ class _Run:
         key_analysis = analyze_keys(*key_frames, keys)
         duplicates = duplicate_key_table(*key_frames, keys)
         del key_frames
+        if (
+            key_analysis.relationship != "one-to-one"
+            and not (cfg.left_group_by or cfg.right_group_by)
+            and cfg.duplicate_strategy
+            not in (DuplicateStrategy.AGGREGATE, DuplicateStrategy.GROUPED)
+        ):
+            cols = keys + [c for c in compare if c not in keys]
+            diagnosis = aggregation_diagnosis(
+                b.fetch("left", cols), b.fetch("right", cols), keys, compare
+            )
+            if diagnosis is not None:
+                self.analyses["aggregation_diagnosis"] = diagnosis
 
         join_keys, compare, ambiguous = self._apply_duplicate_strategy(
             keys, compare, key_analysis.left.is_unique and key_analysis.right.is_unique, duplicates
@@ -283,7 +301,52 @@ class _Run:
             duplicate_keys=duplicates,
             metadata=metadata,
             notes=self.notes,
+            analyses=self.analyses,
         )
+
+    # ------------------------------------------------------------------ analyses
+    def _control_totals(self, keys: list[str], left_rows: int, right_rows: int) -> dict[str, Any]:
+        b = self.b
+        lcols, rcols = b.columns("left"), b.columns("right")
+        common = [c for c in lcols if c in rcols and c not in keys]
+        lsums, rsums = b.sums("left", common), b.sums("right", common)
+        columns: dict[str, Any] = {}
+        for c in common:
+            ls, rs = lsums.get(c), rsums.get(c)
+            if ls is None or rs is None:
+                continue
+            columns[c] = {
+                "left_sum": ls,
+                "right_sum": rs,
+                "difference": rs - ls,
+                "relative_difference": (rs - ls) / abs(ls) if ls else None,
+            }
+        return {
+            "rows": {"left": left_rows, "right": right_rows, "difference": right_rows - left_rows},
+            "columns": columns,
+            "label": "observed",
+        }
+
+    def _grain(self, keys: list[str]) -> dict[str, Any]:
+        b, cfg = self.b, self.cfg
+        inferences = []
+        for side in SIDES:
+            cols = b.columns(side)
+            rows = b.row_count(side)
+            sample = b.sample(side, cols, GRAIN_SAMPLE_ROWS, cfg.seed)
+            verify = None
+            if len(sample) < rows:
+
+                def verify(c: list[str], side: Side = side) -> bool:
+                    return not bool(b.fetch(side, c).duplicated().any())
+
+            inferences.append(infer_grain(sample, side=side, total_rows=rows, verify=verify))
+        out = compare_grains(*inferences)
+        out["keys_are_grain"] = {
+            inf.side: inf.columns is not None and set(inf.columns) <= set(keys)
+            for inf in inferences
+        }
+        return out
 
     # ------------------------------------------------------------------ preparation steps
     def _apply_grain(self, keys: list[str]) -> None:
