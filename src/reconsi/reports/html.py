@@ -867,7 +867,7 @@ def _temporal(a: dict[str, Any], T: _Tables, max_rows: int) -> str:
                 [
                     str(p["period"])[:10],
                     p["records"],
-                    100 * p["match_rate"],
+                    round(100 * p["match_rate"], 2),
                     p["value_mismatch"],
                     p["missing_left"],
                     p["missing_right"],
