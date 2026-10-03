@@ -6,6 +6,7 @@ p-value is below ``alpha`` *and* an effect size exceeds a practical threshold.
 
 from __future__ import annotations
 
+import warnings
 from typing import Any
 
 import numpy as np
@@ -48,7 +49,10 @@ def numeric_distribution(left: pd.Series, right: pd.Series, alpha: float) -> dic
         out["tested"] = False
         out["shift"] = False
         return out
-    ks = stats.ks_2samp(a, b)
+    with warnings.catch_warnings():
+        # scipy falls back to the asymptotic p-value for large samples; that is expected.
+        warnings.simplefilter("ignore", RuntimeWarning)
+        ks = stats.ks_2samp(a, b)
     pooled = np.sqrt((a.var(ddof=1) + b.var(ddof=1)) / 2)
     smd = float((b.mean() - a.mean()) / pooled) if pooled > 0 else 0.0
     wd = float(stats.wasserstein_distance(a, b))

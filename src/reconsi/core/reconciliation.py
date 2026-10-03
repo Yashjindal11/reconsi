@@ -35,6 +35,7 @@ from reconsi.statistics.concentration import concentration
 from reconsi.statistics.differences import largest_differences_summary
 from reconsi.statistics.distributions import compare_distributions
 from reconsi.statistics.unmatched import unmatched_population
+from reconsi.temporal.timeline import timeline
 
 HEAD_ROWS = 10_000
 GRAIN_SAMPLE_ROWS = 200_000
@@ -348,6 +349,9 @@ class _Run:
         self.analyses["largest_differences"] = largest_differences_summary(
             acc.mismatches(), numeric
         )
+        temporal = timeline(records, frequency=cfg.time_frequency, alpha=cfg.alpha, seed=cfg.seed)
+        if temporal is not None:
+            self.analyses["temporal"] = temporal
 
     def _control_totals(self, keys: list[str], left_rows: int, right_rows: int) -> dict[str, Any]:
         b = self.b
