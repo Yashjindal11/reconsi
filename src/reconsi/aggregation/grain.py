@@ -6,6 +6,7 @@ unique in this extract is not guaranteed to be unique by design.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from itertools import combinations
@@ -49,6 +50,14 @@ class GrainInference:
 
 def _duplicate_rows(frame: pd.DataFrame, cols: list[str]) -> int:
     return int(frame.duplicated(subset=cols).sum())
+
+
+_ID_TOKENS = frozenset({"id", "key", "code", "number", "no", "num", "uuid", "guid", "sku"})
+
+
+def _id_like(name: str) -> bool:
+    tokens = re.split(r"[^0-9a-z]+", re.sub(r"(?<=[a-z])(?=[A-Z])", "_", name).lower())
+    return any(t in _ID_TOKENS for t in tokens)
 
 
 def infer_grain(
@@ -95,7 +104,10 @@ def infer_grain(
         near.sort(key=lambda t: t[0])
         for dups, cols in near[:2]:
             evidence.append({"columns": cols, "unique": False, "duplicate_rows": dups})
-        for _, cols in sorted(unique_combos, key=lambda t: (t[0], t[1])):
+        for _, cols in sorted(
+            unique_combos,
+            key=lambda t: (-sum(_id_like(c) for c in t[1]), t[0], [names.index(c) for c in t[1]]),
+        ):
             if verify is None or verify(cols):
                 evidence.append({"columns": cols, "unique": True, "duplicate_rows": 0})
                 return GrainInference(side, rows, cols, evidence, sampled=len(frame) < rows)

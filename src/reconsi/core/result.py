@@ -188,7 +188,7 @@ class ReconciliationResult:
 
         text = render_markdown(self.to_dict())
         if path is not None:
-            Path(path).write_text(text, encoding="utf-8")
+            _write_text(path, text)
         return text
 
     def to_html(self, path: str | Path | None = None) -> str:
@@ -197,7 +197,7 @@ class ReconciliationResult:
 
         text = render_html(self.to_dict())
         if path is not None:
-            Path(path).write_text(text, encoding="utf-8")
+            _write_text(path, text)
         return text
 
     def to_dict(self, sample_size: int | None = None) -> dict[str, Any]:
@@ -231,7 +231,7 @@ class ReconciliationResult:
     def to_json(self, path: str | Path | None = None, *, indent: int = 2) -> str:
         text = json.dumps(self.to_dict(), indent=indent, allow_nan=False)
         if path is not None:
-            Path(path).write_text(text, encoding="utf-8")
+            _write_text(path, text)
         return text
 
     def __repr__(self) -> str:
@@ -241,6 +241,12 @@ class ReconciliationResult:
             f"{s['value_mismatch_records']} value mismatches, {s['missing_left']} missing left, "
             f"{s['missing_right']} missing right>"
         )
+
+
+def _write_text(path: str | Path, text: str) -> None:
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(text, encoding="utf-8")
 
 
 def _none_if_nan(value: Any) -> float | None:
