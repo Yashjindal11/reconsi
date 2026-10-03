@@ -36,6 +36,7 @@ _STRING_HINTS: list[tuple[str, list[str]]] = [
 
 _TRUE = frozenset({"true", "t", "yes", "y", "1"})
 _FALSE = frozenset({"false", "f", "no", "n", "0"})
+_TZ_SUFFIX = r"(?:Z|[+-]\d{2}:?\d{2})\s*$"
 
 
 @dataclass
@@ -246,6 +247,126 @@ def compare_boolean(
     )
 
 
+def _parse_text_datetimes(text: pd.Series, utc: bool) -> pd.Series:
+    parsed = pd.to_datetime(text, errors="coerce", utc=utc, format="ISO8601")
+    if parsed.isna().sum() > text.isna().sum():
+        parsed = pd.to_datetime(text, errors="coerce", utc=utc, format="mixed")
+    return parsed
+
+
+def to_utc_naive(series: pd.Series, timezone: str | None) -> tuple[pd.Series, np.ndarray, bool]:
+    """Parse ``series`` as timestamps expressed in naive UTC.
+
+    Returns ``(values, failed_mask, aware)``. ``aware`` is False when the input carried no
+    timezone information and none was configured; such values are left as wall-clock times.
+    """
+    notna = series.notna().to_numpy()
+    dtype = series.dtype
+    aware = False
+    if isinstance(dtype, pd.DatetimeTZDtype):
+        values = series.dt.tz_convert("UTC").dt.tz_localize(None)
+        aware = True
+    elif pd.api.types.is_datetime64_dtype(dtype):
+        values = series
+    else:
+        text = series.astype(object).where(series.notna(), None)
+        as_str = text.dropna().astype(str)
+        has_offset = bool(as_str.str.contains(_TZ_SUFFIX, regex=True).any())
+        tz_objects = any(getattr(v, "tzinfo", None) is not None for v in text.dropna().head(50))
+        aware = has_offset or tz_objects
+        values = _parse_text_datetimes(text, utc=aware)
+        if aware:
+            values = values.dt.tz_localize(None)
+    if not aware and timezone is not None:
+        values = (
+            values.dt.tz_localize(timezone, ambiguous="NaT", nonexistent="NaT")
+            .dt.tz_convert("UTC")
+            .dt.tz_localize(None)
+        )
+        aware = True
+    values = values.astype("datetime64[us]")
+    failed = notna & values.isna().to_numpy()
+    return values, failed, aware
+
+
+def _datetime_hints(diff: np.ndarray, a: pd.Series, b: pd.Series) -> list[dict[str, Any]]:
+    hints: list[dict[str, Any]] = []
+    n = len(diff)
+    if n == 0:
+        return hints
+    values, counts = np.unique(diff, return_counts=True)
+    top = int(np.argmax(counts))
+    offset, share = float(values[top]), counts[top] / n
+    if share >= 0.8 and offset != 0 and abs(offset) <= 14 * 3600 and offset % 900 == 0:
+        sign = "+" if offset > 0 else "-"
+        hours, rem = divmod(int(abs(offset)), 3600)
+        hints.append(
+            {
+                "kind": "constant_offset",
+                "offset_seconds": offset,
+                "offset": f"{sign}{hours:02d}:{rem // 60:02d}",
+                "share": float(share),
+                "message": "A constant whole-quarter-hour offset is consistent with a timezone "
+                "difference between the two sources.",
+            }
+        )
+    for unit, label in (("s", "second"), ("min", "minute"), ("D", "day")):
+        resolved = int((a.dt.floor(unit) == b.dt.floor(unit)).sum())
+        if resolved:
+            hints.append(
+                {
+                    "kind": "precision",
+                    "precision": label,
+                    "would_resolve": resolved,
+                    "of_mismatches": n,
+                }
+            )
+            break
+    return hints
+
+
+def compare_datetime(
+    column: str, left: pd.Series, right: pd.Series, options: ColumnOptions
+) -> ColumnComparison:
+    ln, rn = _null_masks(left, right, options)
+    a, af, a_aware = to_utc_naive(left, options.timezone)
+    b, bf, b_aware = to_utc_naive(right, options.timezone)
+    hints: list[dict[str, Any]] = []
+    if a_aware != b_aware:
+        hints.append(
+            {
+                "kind": "timezone_assumption",
+                "message": "One side has timezone information and the other does not; the naive "
+                "side was assumed to be UTC. Set `timezone` for this column to override.",
+            }
+        )
+    if options.compare_as_date:
+        a, b = a.dt.floor("D"), b.dt.floor("D")
+    diff = (b - a).dt.total_seconds().to_numpy(dtype=float, na_value=np.nan)
+    with np.errstate(invalid="ignore"):
+        exact = diff == 0
+        equal_values = np.abs(diff) <= options.tolerance_seconds
+    equal, mtype = _finish(equal_values, ln, rn, af | bf, MismatchType.DATETIME, options)
+    value_mismatch = mtype == MismatchType.DATETIME.value
+    if value_mismatch.any():
+        hints.extend(_datetime_hints(diff[value_mismatch], a[value_mismatch], b[value_mismatch]))
+    return ColumnComparison(
+        column=column,
+        kind="datetime",
+        equal=equal,
+        mismatch_type=mtype,
+        within_tolerance=equal & ~exact & ~ln & ~rn,
+        difference=np.where(ln | rn, np.nan, diff),
+        effective={
+            "timezone": options.timezone,
+            "tolerance_seconds": options.tolerance_seconds,
+            "compare_as_date": options.compare_as_date,
+            "difference_unit": "seconds",
+        },
+        hints=hints,
+    )
+
+
 def compare_column(
     column: str, left: pd.Series, right: pd.Series, options: ColumnOptions
 ) -> ColumnComparison:
@@ -259,6 +380,8 @@ def compare_column(
         result = compare_boolean(column, left, right, options)
     elif kind == "string":
         result = compare_string(column, left, right, options)
+    elif kind == "datetime":
+        result = compare_datetime(column, left, right, options)
     else:
         raise NotImplementedError(kind)
     result.datatype_mismatch = dtype_mismatch
