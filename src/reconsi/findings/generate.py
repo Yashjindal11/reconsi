@@ -51,7 +51,10 @@ def _pct(x: float, digits: int = 2) -> str:
 
 
 def _n(x: float) -> str:
-    return f"{x:,.0f}" if float(x).is_integer() else f"{x:,.4g}"
+    x = float(x)
+    if x.is_integer():
+        return f"{x:,.0f}"
+    return f"{x:,.2f}" if abs(x) >= 1 else f"{x:.4g}"
 
 
 class _Builder:

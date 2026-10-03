@@ -191,6 +191,15 @@ class ReconciliationResult:
             Path(path).write_text(text, encoding="utf-8")
         return text
 
+    def to_html(self, path: str | Path | None = None) -> str:
+        """Standalone HTML report (works offline; no external assets)."""
+        from reconsi.reports.html import render_html
+
+        text = render_html(self.to_dict())
+        if path is not None:
+            Path(path).write_text(text, encoding="utf-8")
+        return text
+
     def to_dict(self, sample_size: int | None = None) -> dict[str, Any]:
         n = self.config.sample_size if sample_size is None else sample_size
         return json_dict(
