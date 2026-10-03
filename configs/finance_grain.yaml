@@ -1,0 +1,19 @@
+# Transaction-level ledger vs. a monthly financial summary (grain reconciliation).
+name: ledger_vs_monthly_summary
+left:
+  path: ../data/ledger.parquet
+right:
+  path: ../data/monthly_summary.csv
+
+left_group_by: [account, month]
+aggregations:
+  amount: sum
+  transactions: count
+
+columns:
+  amount:
+    absolute_tolerance: 0.01
+    critical: true
+
+thresholds:
+  max_missing_records: 0

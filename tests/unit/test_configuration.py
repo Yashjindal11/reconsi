@@ -137,3 +137,13 @@ def test_missing_and_non_mapping_config(tmp_path: Path) -> None:
 def test_output_json_alias() -> None:
     cfg = config_from_dict({"keys": ["a"], "output": {"json": "out.json", "html": "r.html"}})
     assert cfg.output is not None and cfg.output.json_path == "out.json"
+
+
+@pytest.mark.parametrize(
+    "path",
+    sorted((Path(__file__).resolve().parents[2] / "configs").glob("*.yaml")),
+    ids=lambda p: p.name,
+)
+def test_shipped_configs_are_valid(path: Path) -> None:
+    cfg = load_config(path)
+    assert cfg.resolved_left_keys

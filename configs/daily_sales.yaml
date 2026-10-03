@@ -1,0 +1,45 @@
+# Daily sales reconciliation between two systems (paths relative to this file).
+# Run: reconsi validate configs/daily_sales.yaml && reconsi run configs/daily_sales.yaml
+name: daily_sales_reconciliation
+description: Point-of-sale system vs. the data warehouse, one row per date/store/product.
+
+left:
+  path: ../data/sales_system_a.parquet
+right:
+  path: ../data/sales_system_b.parquet
+
+keys: [date, store_id, product_id]
+
+columns:
+  revenue:
+    type: numeric
+    absolute_tolerance: 0.01
+  quantity:
+    type: numeric
+    absolute_tolerance: 0
+  store_name:
+    normalize: [trim, casefold]
+
+duplicate_strategy: strict
+dimensions: [store_id, region, channel]
+date_column: date
+
+thresholds:
+  max_missing_records: 0
+  max_mismatch_percentage: 0.1
+
+rules:
+  - name: revenue_total
+    metric: column_total_relative_difference
+    column: revenue
+    max: 0.01
+  - name: coverage
+    metric: match_percentage
+    min: 99.9
+    severity: warning
+
+output:
+  html: reports/daily_sales.html
+  json: reports/daily_sales.json
+history:
+  path: .reconsi/history.db
