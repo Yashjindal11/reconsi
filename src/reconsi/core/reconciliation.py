@@ -133,7 +133,7 @@ class Reconciliation:
         )
 
     def run(self) -> ReconciliationResult:
-        backend = make_backend(self.config.backend)
+        backend = make_backend(self.config.backend, self.config.backend_options)
         try:
             result = _Run(self.config, self.left, self.right, backend, self.base_dir).execute()
         finally:

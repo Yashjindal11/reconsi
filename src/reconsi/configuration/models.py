@@ -166,6 +166,8 @@ class ReconConfig(_Strict):
     rules: list[RuleConfig] = Field(default_factory=list)
 
     backend: Literal["pandas", "duckdb"] = "pandas"
+    backend_options: dict[str, str | int] = Field(default_factory=dict)
+    """DuckDB only: ``memory_limit`` (e.g. "4GB"), ``threads``, ``temp_directory``."""
     chunk_size: int = Field(default=1_000_000, ge=1_000)
     sample_size: int = Field(default=20, ge=0, le=10_000)
     max_detail_rows: int = Field(default=1_000_000, ge=0)

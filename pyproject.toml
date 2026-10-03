@@ -88,6 +88,8 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+# SQL is assembled only from identifiers quoted by q() and int() literals; values are bound.
+"src/reconsi/backends/duckdb_backend.py" = ["S608"]
 "tests/**" = ["S", "B011"]
 "examples/**" = ["S"]
 "benchmarks/**" = ["S"]
