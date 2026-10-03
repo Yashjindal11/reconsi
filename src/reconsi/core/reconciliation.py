@@ -26,6 +26,7 @@ from reconsi.core.errors import ConfigurationError
 from reconsi.core.profiling import detect_date_column, detect_dimensions
 from reconsi.core.result import ReconciliationResult
 from reconsi.core.types import DuplicateStrategy, RecordStatus
+from reconsi.findings.generate import generate_findings, recommendations
 from reconsi.inputs.sources import TableSource, as_source
 from reconsi.keys.analysis import analyze_keys, duplicate_key_table
 from reconsi.rules.engine import RuleContext, RuleSet, overall_status
@@ -295,7 +296,7 @@ class _Run:
             "date_column": date_column,
             "dimensions": dimensions,
         }
-        return ReconciliationResult(
+        result = ReconciliationResult(
             config=cfg,
             status=status,
             summary=summary,
@@ -313,6 +314,9 @@ class _Run:
             analyses=self.analyses,
             rule_results=rule_results,
         )
+        result.findings = generate_findings(result)
+        result.recommendations = recommendations(result.findings)
+        return result
 
     # ------------------------------------------------------------------ analyses
     def _statistics(

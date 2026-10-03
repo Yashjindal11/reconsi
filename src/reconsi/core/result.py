@@ -76,6 +76,7 @@ class ReconciliationResult:
     analyses: dict[str, Any] = field(default_factory=dict)
     rule_results: list[Any] = field(default_factory=list)
     findings: list[Any] = field(default_factory=list)
+    recommendations: list[str] = field(default_factory=list)
 
     @property
     def key_columns(self) -> list[str]:
@@ -198,6 +199,7 @@ class ReconciliationResult:
                 "analyses": self.analyses,
                 "rules": [to_jsonable(r) for r in self.rule_results],
                 "findings": [to_jsonable(f) for f in self.findings],
+                "recommendations": self.recommendations,
                 "notes": self.notes,
                 "configuration": self.config.model_dump(mode="json", by_alias=True),
             }
