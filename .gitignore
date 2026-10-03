@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+coverage.xml
+htmlcov/
+
+# Reconciliation outputs may contain private data
+reconsi-report*
+/reports/
+/output/
+examples/output/
+.reconsi/
+
+# Secrets / local config
+.env
+.env.*
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Quick (CI) research runs
+benchmarks/results/*-quick.json
