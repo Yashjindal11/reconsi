@@ -30,6 +30,11 @@ from reconsi.inputs.sources import TableSource, as_source
 from reconsi.keys.analysis import analyze_keys, duplicate_key_table
 from reconsi.schema.compare import diff_schemas
 from reconsi.schema.inspect import ColumnSchema, TableSchema
+from reconsi.statistics.bias import detect_bias
+from reconsi.statistics.concentration import concentration
+from reconsi.statistics.differences import largest_differences_summary
+from reconsi.statistics.distributions import compare_distributions
+from reconsi.statistics.unmatched import unmatched_population
 
 HEAD_ROWS = 10_000
 GRAIN_SAMPLE_ROWS = 200_000
@@ -270,6 +275,7 @@ class _Run:
         summary = self._summary(
             records, acc, ambiguous, key_analysis, compare, join_keys, left_rows, right_rows
         )
+        self._statistics(acc, records, compare, kinds, dimensions)
         status = Status.PASS
         if summary["missing_left"] or summary["missing_right"] or summary["value_mismatch_records"]:
             status = Status.FAIL
@@ -305,6 +311,44 @@ class _Run:
         )
 
     # ------------------------------------------------------------------ analyses
+    def _statistics(
+        self,
+        acc: RecordAccumulator,
+        records: pd.DataFrame,
+        compare: list[str],
+        kinds: dict[str, str],
+        dimensions: list[str],
+    ) -> None:
+        cfg, b = self.cfg, self.b
+        numeric = [c for c in compare if kinds[c] == "numeric"]
+        self.analyses["bias"] = {
+            c: detect_bias(acc.all_differences(c), acc.all_relative_differences(c), alpha=cfg.alpha)
+            for c in numeric
+        }
+        samples = [
+            b.sample(
+                side,
+                [c for c in compare if c in b.columns(side)],
+                cfg.distribution_sample,
+                cfg.seed,
+            )
+            for side in SIDES
+        ]
+        self.analyses["distributions"] = {
+            "sampled": any(
+                len(s) < b.row_count(side) for s, side in zip(samples, SIDES, strict=True)
+            ),
+            "sample_size": cfg.distribution_sample,
+            "columns": compare_distributions(samples[0], samples[1], compare, cfg.alpha),
+        }
+        self.analyses["concentration"] = concentration(records, dimensions, cfg.alpha)
+        self.analyses["unmatched_population"] = unmatched_population(
+            records, dimensions, alpha=cfg.alpha
+        )
+        self.analyses["largest_differences"] = largest_differences_summary(
+            acc.mismatches(), numeric
+        )
+
     def _control_totals(self, keys: list[str], left_rows: int, right_rows: int) -> dict[str, Any]:
         b = self.b
         lcols, rcols = b.columns("left"), b.columns("right")

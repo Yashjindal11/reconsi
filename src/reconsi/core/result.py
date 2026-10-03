@@ -3,17 +3,20 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
-from reconsi.comparison.records import STATUS, ColumnStatistics
+from reconsi.comparison.records import DIM_PREFIX, STATUS, ColumnStatistics
 from reconsi.core.serialization import frame_records, json_dict, to_jsonable
 from reconsi.core.types import RecordStatus, Status
 from reconsi.keys.analysis import KeyAnalysis
 from reconsi.schema.compare import SchemaDiff
+from reconsi.statistics.concentration import breakdown
+from reconsi.statistics.differences import RankBy, largest_differences
 
 if TYPE_CHECKING:
     from reconsi.configuration.models import ReconConfig
@@ -113,6 +116,46 @@ class ReconciliationResult:
                 }
             )
         return pd.DataFrame(rows)
+
+    # ------------------------------------------------------------------ investigation
+    @property
+    def dimensions(self) -> list[str]:
+        return list(self.metadata.get("dimensions") or [])
+
+    def drill_down(
+        self,
+        dimension: str | Sequence[str],
+        *more: str,
+        where: Mapping[str, Any] | None = None,
+    ) -> pd.DataFrame:
+        """Record status broken down by one or more dimensions.
+
+        ``result.drill_down("region")`` then ``result.drill_down("product",
+        where={"region": "West"})`` drills recursively into a segment.
+        """
+        dims = [dimension] if isinstance(dimension, str) else list(dimension)
+        dims += list(more)
+        filters = dict(where or {})
+        unknown = [d for d in [*dims, *filters] if d not in self.dimensions]
+        if unknown:
+            raise KeyError(
+                f"unknown dimension(s) {unknown}; available: {self.dimensions} "
+                "(set `dimensions=` to choose others)"
+            )
+        records = self.records
+        for col, value in filters.items():
+            levels = records[DIM_PREFIX + col].astype(object)
+            records = records[levels.astype(str).to_numpy() == str(value)]
+        return breakdown(records, dims)
+
+    def largest_differences(
+        self, column: str, n: int = 10, by: RankBy = "absolute"
+    ) -> pd.DataFrame:
+        """Largest numeric differences for ``column`` ranked ``absolute``, ``relative``,
+        ``positive`` or ``negative``."""
+        if column not in self.columns:
+            raise KeyError(f"{column!r} was not compared; compared: {list(self.columns)}")
+        return largest_differences(self.value_mismatches, column, n, by)
 
     def record_mismatches(self, limit: int | None = None) -> list[RecordMismatch]:
         frame = self.value_mismatches if limit is None else self.value_mismatches.head(limit)

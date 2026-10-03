@@ -17,7 +17,9 @@ def wilson_interval(successes: int, n: int, confidence: float = 0.95) -> tuple[f
     denom = 1 + z**2 / n
     centre = (p + z**2 / (2 * n)) / denom
     half = z * math.sqrt(p * (1 - p) / n + z**2 / (4 * n**2)) / denom
-    return (max(0.0, centre - half), min(1.0, centre + half))
+    lo = 0.0 if successes == 0 else max(0.0, centre - half)
+    hi = 1.0 if successes == n else min(1.0, centre + half)
+    return (lo, hi)
 
 
 PERCENTILES: tuple[int, ...] = (1, 5, 25, 50, 75, 95, 99)
