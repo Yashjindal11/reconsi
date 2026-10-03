@@ -210,6 +210,30 @@ def diagnose_normalizations(left_only: set[str], right_only: set[str]) -> list[d
     return out
 
 
+def duplicate_key_table(left: pd.DataFrame, right: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
+    """Every key duplicated on either side, with its row count on each side."""
+    parts = []
+    for frame, side in ((left, "left"), (right, "right")):
+        valid = frame.loc[~frame[keys].isna().any(axis=1), keys]
+        ck = combined_key(valid, keys)
+        counts = ck.value_counts()
+        firsts = valid.assign(_ck=ck.to_numpy()).drop_duplicates("_ck").set_index("_ck")
+        parts.append((counts, firsts, side))
+    (lc, lf, _), (rc, rf, _) = parts
+    dup_index = lc.index[lc > 1].union(rc.index[rc > 1])
+    if len(dup_index) == 0:
+        return pd.DataFrame(
+            {**{k: pd.Series(dtype=object) for k in keys}, "left_count": [], "right_count": []}
+        )
+    firsts = pd.concat([lf, rf[~rf.index.isin(lf.index)]])
+    out = firsts.loc[dup_index, keys].reset_index(drop=True)
+    out["left_count"] = lc.reindex(dup_index, fill_value=0).to_numpy()
+    out["right_count"] = rc.reindex(dup_index, fill_value=0).to_numpy()
+    total = out["left_count"] + out["right_count"]
+    order = (-total).argsort(kind="stable")
+    return out.iloc[order].reset_index(drop=True)
+
+
 def analyze_keys(left: pd.DataFrame, right: pd.DataFrame, keys: list[str]) -> KeyAnalysis:
     """Analyse ``keys`` on both datasets (which must already use the same key column names)."""
     lk, rk = combined_key(left, keys), combined_key(right, keys)

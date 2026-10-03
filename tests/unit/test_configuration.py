@@ -51,9 +51,27 @@ def test_keys_resolution_with_mapping_and_group_by() -> None:
     assert cfg.resolved_left_keys == ["customer_id"]
     assert cfg.resolved_right_keys == ["cust_id"]
     cfg = ReconConfig(left_group_by=["date"], right_keys=["day"], aggregations={"revenue": "sum"})
-    assert cfg.keys == ["date"] and cfg.resolved_right_keys == ["day"]
+    assert cfg.resolved_left_keys == ["date"] and cfg.resolved_right_keys == ["day"]
     cfg = ReconConfig(right_keys=["id"])
-    assert cfg.keys == ["id"]
+    assert cfg.resolved_left_keys == ["id"]
+
+
+def test_tolerances_shorthand() -> None:
+    cfg = config_from_dict(
+        {
+            "keys": ["id"],
+            "columns": {"revenue": {"type": "numeric"}},
+            "tolerances": {
+                "revenue": {"absolute": 0.01, "relative": 0.0001},
+                "qty": {"absolute": 0},
+            },
+        }
+    )
+    rev = cfg.column_options("revenue")
+    assert (rev.type, rev.absolute_tolerance, rev.relative_tolerance) == ("numeric", 0.01, 0.0001)
+    assert cfg.column_options("qty").absolute_tolerance == 0
+    with pytest.raises(ConfigurationError, match="absolute"):
+        config_from_dict({"keys": ["id"], "tolerances": {"x": {"abs": 1}}})
 
 
 @pytest.mark.parametrize(

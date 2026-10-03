@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 import pandas as pd
@@ -95,9 +95,27 @@ def compare_schemas(
     mapping = dict(column_mapping or {})
     inverse = {r: lft for lft, r in mapping.items()}
     renamed_right = right.rename(columns=inverse)
-    ls = inspect_schema(left, left_name)
-    rs_raw = inspect_schema(right, right_name)
-    rs = inspect_schema(renamed_right, right_name)
+    return diff_schemas(
+        inspect_schema(left, left_name),
+        inspect_schema(renamed_right, right_name),
+        column_mapping=mapping,
+        left_sample=left,
+        right_sample=renamed_right,
+        suggest=suggest,
+    )
+
+
+def diff_schemas(
+    ls: TableSchema,
+    rs: TableSchema,
+    *,
+    column_mapping: dict[str, str] | None = None,
+    left_sample: pd.DataFrame | None = None,
+    right_sample: pd.DataFrame | None = None,
+    suggest: bool = True,
+) -> SchemaDiff:
+    """Diff two schemas whose right-hand column names are already mapped to left names."""
+    mapping = dict(column_mapping or {})
     lnames, rnames = ls.column_names, rs.column_names
     rset, lset = set(rnames), set(lnames)
     common = [c for c in lnames if c in rset]
@@ -128,11 +146,16 @@ def compare_schemas(
             )
     order_changed = [c for c in lnames if c in rset] != [c for c in rnames if c in lset]
     suggestions: list[ColumnMatchSuggestion] = []
-    if suggest and removed and added:
-        suggestions = suggest_column_matches(left, renamed_right, removed, added)
+    if suggest and removed and added and left_sample is not None and right_sample is not None:
+        suggestions = suggest_column_matches(left_sample, right_sample, removed, added)
+    right_display = TableSchema(
+        name=rs.name,
+        row_count=rs.row_count,
+        columns=[replace(c, name=mapping.get(c.name, c.name)) for c in rs.columns],
+    )
     return SchemaDiff(
         left=ls,
-        right=rs_raw,
+        right=right_display,
         common=common,
         added=added,
         removed=removed,

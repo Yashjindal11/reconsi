@@ -177,23 +177,44 @@ class ReconConfig(_Strict):
 
     @model_validator(mode="before")
     @classmethod
-    def _thresholds_under_rules(cls, data: Any) -> Any:
-        # Accept the shorthand ``rules: {max_mismatch_percentage: 0.1}`` as thresholds.
-        if isinstance(data, dict) and isinstance(data.get("rules"), dict):
-            data = dict(data)
+    def _shorthands(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+        data = dict(data)
+        # ``rules: {max_mismatch_percentage: 0.1}`` is accepted as thresholds.
+        if isinstance(data.get("rules"), dict):
             thresholds = dict(data.get("thresholds") or {})
             thresholds.update(data.pop("rules"))
             data["thresholds"] = thresholds
+        # ``tolerances: {revenue: {absolute: 0.01, relative: 0.0001}}`` configures columns.
+        tolerances = data.pop("tolerances", None)
+        if tolerances:
+            if not isinstance(tolerances, dict):
+                raise ValueError("`tolerances` must map column names to {absolute, relative}")
+            columns = {k: dict(v) for k, v in (data.get("columns") or {}).items()}
+            for col, spec in tolerances.items():
+                if not isinstance(spec, dict) or set(spec) - {"absolute", "relative"}:
+                    raise ValueError(f"tolerances.{col} accepts only `absolute` and `relative`")
+                entry = columns.setdefault(col, {})
+                if "absolute" in spec:
+                    entry["absolute_tolerance"] = spec["absolute"]
+                if "relative" in spec:
+                    entry["relative_tolerance"] = spec["relative"]
+            data["columns"] = columns
         return data
 
-    @model_validator(mode="after")
-    def _resolve_keys(self) -> ReconConfig:
-        left = self.left_group_by or self.left_keys or self.keys
-        right = self.right_group_by or self.right_keys
+    def _compute_keys(self) -> tuple[list[str], list[str]]:
+        left = list(self.left_group_by or self.left_keys or self.keys)
+        right = list(self.right_group_by or self.right_keys or [])
         if not right:
-            right = [self.column_mapping.get(k, k) for k in left] if left else []
-        if not left and right:
+            right = [self.column_mapping.get(k, k) for k in left]
+        if not left:
             left = list(right)
+        return left, right
+
+    @model_validator(mode="after")
+    def _validate_keys(self) -> ReconConfig:
+        left, right = self._compute_keys()
         if not left:
             raise ValueError("at least one key column is required (keys=...)")
         if len(left) != len(right):
@@ -204,10 +225,8 @@ class ReconConfig(_Strict):
             raise ValueError(f"duplicate key columns: {left}")
         if (self.left_group_by or self.right_group_by) and not self.aggregations:
             raise ValueError("left_group_by/right_group_by require `aggregations`")
-        self.left_keys, self.right_keys = list(left), list(right)
-        self.keys = list(left)
         for rule in self.rules:
-            if rule.column and rule.column in self.keys:
+            if rule.column and rule.column in left:
                 raise ValueError(f"rule {rule.name!r} targets key column {rule.column!r}")
         return self
 
@@ -220,10 +239,10 @@ class ReconConfig(_Strict):
 
     @property
     def resolved_left_keys(self) -> list[str]:
-        assert self.left_keys is not None
-        return self.left_keys
+        """Key columns under their left-hand (reconciliation) names."""
+        return self._compute_keys()[0]
 
     @property
     def resolved_right_keys(self) -> list[str]:
-        assert self.right_keys is not None
-        return self.right_keys
+        """Key columns as named in the right-hand dataset."""
+        return self._compute_keys()[1]

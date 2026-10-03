@@ -6,6 +6,7 @@ from reconsi.keys.analysis import (
     SideKeyProfile,
     analyze_keys,
     diagnose_normalizations,
+    duplicate_key_table,
 )
 from reconsi.keys.canonical import canonical_strings, combined_key
 
@@ -17,4 +18,5 @@ __all__ = [
     "canonical_strings",
     "combined_key",
     "diagnose_normalizations",
+    "duplicate_key_table",
 ]

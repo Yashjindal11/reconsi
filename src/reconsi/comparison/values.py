@@ -289,27 +289,36 @@ def to_utc_naive(series: pd.Series, timezone: str | None) -> tuple[pd.Series, np
     return values, failed, aware
 
 
+def constant_offset_hint(diffs: np.ndarray) -> dict[str, Any] | None:
+    """Detect a dominant whole-quarter-hour offset among datetime mismatches (timezone clue)."""
+    diffs = diffs[np.isfinite(diffs)]
+    if len(diffs) == 0:
+        return None
+    values, counts = np.unique(diffs, return_counts=True)
+    top = int(np.argmax(counts))
+    offset, share = float(values[top]), counts[top] / len(diffs)
+    if share < 0.8 or offset == 0 or abs(offset) > 14 * 3600 or offset % 900 != 0:
+        return None
+    sign = "+" if offset > 0 else "-"
+    hours, rem = divmod(int(abs(offset)), 3600)
+    return {
+        "kind": "constant_offset",
+        "offset_seconds": offset,
+        "offset": f"{sign}{hours:02d}:{rem // 60:02d}",
+        "share": float(share),
+        "message": "A constant whole-quarter-hour offset is consistent with a timezone "
+        "difference between the two sources.",
+    }
+
+
 def _datetime_hints(diff: np.ndarray, a: pd.Series, b: pd.Series) -> list[dict[str, Any]]:
     hints: list[dict[str, Any]] = []
     n = len(diff)
     if n == 0:
         return hints
-    values, counts = np.unique(diff, return_counts=True)
-    top = int(np.argmax(counts))
-    offset, share = float(values[top]), counts[top] / n
-    if share >= 0.8 and offset != 0 and abs(offset) <= 14 * 3600 and offset % 900 == 0:
-        sign = "+" if offset > 0 else "-"
-        hours, rem = divmod(int(abs(offset)), 3600)
-        hints.append(
-            {
-                "kind": "constant_offset",
-                "offset_seconds": offset,
-                "offset": f"{sign}{hours:02d}:{rem // 60:02d}",
-                "share": float(share),
-                "message": "A constant whole-quarter-hour offset is consistent with a timezone "
-                "difference between the two sources.",
-            }
-        )
+    offset_hint = constant_offset_hint(diff)
+    if offset_hint:
+        hints.append(offset_hint)
     for unit, label in (("s", "second"), ("min", "minute"), ("D", "day")):
         resolved = int((a.dt.floor(unit) == b.dt.floor(unit)).sum())
         if resolved:

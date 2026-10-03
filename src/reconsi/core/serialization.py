@@ -67,6 +67,13 @@ def to_jsonable(value: Any) -> Any:
     return str(value)
 
 
+def json_dict(value: Any) -> dict[str, Any]:
+    """``to_jsonable`` for values known to serialise to a JSON object."""
+    out = to_jsonable(value)
+    assert isinstance(out, dict)
+    return out
+
+
 def frame_records(frame: pd.DataFrame, limit: int | None = None) -> list[dict[str, Any]]:
     """Return ``frame`` as a list of JSON-safe row dictionaries."""
     if limit is not None:
