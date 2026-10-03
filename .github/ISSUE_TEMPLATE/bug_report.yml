@@ -1,0 +1,29 @@
+name: Bug report
+description: ReconSI reports something wrong, misses something, or crashes
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: ReconSI version
+      description: Output of `reconsi --version`
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened and what did you expect?
+      description: For wrong findings, include the finding title, its evidence label and the relevant summary numbers.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Synthetic data only (reconsi.synthetic can help). Never paste private or personal data.
+      render: python
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: OS, Python version, backend (pandas/duckdb)
