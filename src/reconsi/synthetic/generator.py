@@ -190,12 +190,16 @@ def generate_reconciliation_pair(
         hit = pool.take(count(mismatch_rate))
         cols = rng.choice(["revenue", "quantity", "status"], len(hit), p=[0.6, 0.25, 0.15])
         for i, col in zip(hit, cols, strict=True):
+            # Random direction, so plain value errors carry no systematic bias.
+            up = bool(rng.random() < 0.5)
             if col == "revenue":
-                right.loc[i, "revenue"] = round(
-                    float(left.loc[i, "revenue"]) * float(rng.uniform(1.05, 1.5)), 2
-                )
+                scale = float(rng.uniform(1.05, 1.5))
+                value = float(left.loc[i, "revenue"]) * (scale if up else 1 / scale)
+                right.loc[i, "revenue"] = round(value, 2)
             elif col == "quantity":
-                right.loc[i, "quantity"] = int(left.loc[i, "quantity"]) + int(rng.integers(1, 4))
+                q = int(left.loc[i, "quantity"])
+                step = int(rng.integers(1, 4))
+                right.loc[i, "quantity"] = q + step if up or q <= step else q - step
             else:
                 options = [s for s in STATUSES if s != left.loc[i, "status"]]
                 right.loc[i, "status"] = str(rng.choice(options))
