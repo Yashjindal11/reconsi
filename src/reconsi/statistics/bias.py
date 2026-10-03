@@ -73,8 +73,9 @@ def detect_bias(
             detail = f" by a fairly consistent {abs(out['median_relative_difference']) * 100:.2f}%"
         elif out["constant_offset"]:
             detail = f" by a near-constant {abs(med_abs):,.4g}"
+        p_text = f"p={sign_p:.2g}" if sign_p > 0 else "p<1e-300"
         out["message"] = (
             f"Systematic difference detected: the right value is {word}{detail} in "
-            f"{consistency:.0%} of {len(nonzero):,} differing pairs (sign test p={sign_p:.2g})."
+            f"{consistency:.0%} of {len(nonzero):,} differing pairs (sign test {p_text})."
         )
     return out

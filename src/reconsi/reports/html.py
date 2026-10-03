@@ -583,7 +583,7 @@ def _columns(doc: dict[str, Any], T: _Tables) -> str:
             c["classification"].replace("_", " "),
             c["compared"],
             c["mismatches"],
-            c["match_percentage"],
+            round(c["match_percentage"], 3),
             f"{c['mismatch_percentage_ci95'][0]:.2f}-{c['mismatch_percentage_ci95'][1]:.2f}%",
             c["within_tolerance"],
             c["null_mismatches"],
