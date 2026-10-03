@@ -16,6 +16,8 @@ STATUSES = [s.value for s in RecordStatus if s is not RecordStatus.AMBIGUOUS]
 
 
 def _levels(series: pd.Series) -> pd.Series:
+    if pd.api.types.is_string_dtype(series.dtype) and series.dtype != object:
+        return series.fillna(NULL_LEVEL)
     return series.astype(object).where(series.notna(), NULL_LEVEL).astype(str)
 
 

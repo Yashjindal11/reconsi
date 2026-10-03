@@ -8,6 +8,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from pandas.api import types as pdt
 
 from reconsi.comparison.options import DEFAULT_FLOAT_RELATIVE_TOLERANCE, ColumnOptions
 from reconsi.core.dtypes import logical_type, type_family
@@ -180,26 +181,43 @@ def apply_normalizations(text: pd.Series, steps: list[str]) -> pd.Series:
     return text
 
 
+def _text_equal(a: pd.Series, b: pd.Series) -> np.ndarray:
+    eq = a.reset_index(drop=True) == b.reset_index(drop=True)
+    return np.asarray(eq.fillna(False).to_numpy(dtype=bool))
+
+
 def compare_string(
     column: str, left: pd.Series, right: pd.Series, options: ColumnOptions
 ) -> ColumnComparison:
     ln, rn = _null_masks(left, right, options)
-    a = apply_normalizations(_text(left), list(options.normalize))
-    b = apply_normalizations(_text(right), list(options.normalize))
-    exact = (_text(left) == _text(right)).to_numpy()
-    equal_values = (a == b).to_numpy()
+    both_text = pdt.is_string_dtype(left.dtype) and pdt.is_string_dtype(right.dtype)
+    if both_text:
+        # Fast path: compare string columns directly (nulls are handled by the null masks).
+        ta, tb = left.fillna(""), right.fillna("")
+        if left.dtype == object or right.dtype == object:
+            ta, tb = ta.astype(str), tb.astype(str)
+    else:
+        ta, tb = _text(left), _text(right)
+    exact = _text_equal(ta, tb)
+    if options.normalize:
+        a = apply_normalizations(ta, list(options.normalize))
+        b = apply_normalizations(tb, list(options.normalize))
+        equal_values = _text_equal(a, b)
+    else:
+        a, b, equal_values = ta, tb, exact
     failed = np.zeros(len(a), dtype=bool)
     equal, mtype = _finish(equal_values, ln, rn, failed, MismatchType.STRING, options)
     hints: list[dict[str, Any]] = []
     value_mismatch = mtype == MismatchType.STRING.value
     n_mismatch = int(value_mismatch.sum())
     if n_mismatch:
-        ma, mb = a[value_mismatch], b[value_mismatch]
+        ma = a[value_mismatch].astype(object).astype(str)
+        mb = b[value_mismatch].astype(object).astype(str)
         for label, steps in _STRING_HINTS:
             if set(steps) <= set(options.normalize):
                 continue
             resolved = int(
-                (apply_normalizations(ma, steps) == apply_normalizations(mb, steps)).sum()
+                _text_equal(apply_normalizations(ma, steps), apply_normalizations(mb, steps)).sum()
             )
             if resolved:
                 hints.append(

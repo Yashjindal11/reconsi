@@ -11,7 +11,13 @@ from pandas.api import types as pdt
 
 from reconsi.core.dtypes import compatible_types, logical_type
 from reconsi.core.serialization import to_jsonable
-from reconsi.keys.canonical import KEY_NORMALIZATIONS, SEP, combined_key, shape_of
+from reconsi.keys.canonical import (
+    KEY_NORMALIZATIONS,
+    SEP,
+    canonical_strings,
+    combined_key,
+    shape_of,
+)
 
 Relationship = Literal["one-to-one", "one-to-many", "many-to-one", "many-to-many"]
 
@@ -150,33 +156,82 @@ def _format_issues(series: pd.Series, max_distinct: int = 200_000) -> KeyFormatI
     return issues
 
 
-def profile_side(frame: pd.DataFrame, keys: list[str], side: str, ck: pd.Series) -> SideKeyProfile:
-    """Profile uniqueness, nulls and formatting of ``keys`` in one dataset."""
-    null_mask = frame[keys].isna().any(axis=1)
-    counts = ck[~null_mask.to_numpy()].value_counts(sort=False)
-    dup = counts[counts > 1]
+def key_codes(frames: list[pd.DataFrame], keys: list[str]) -> tuple[list[np.ndarray], int]:
+    """Factorise key values jointly across ``frames``: equal keys get equal integer codes.
+
+    Rows with a null key component get ``-1``. When a key column's logical type differs between
+    frames, values are compared through their canonical text form (``1`` == ``"1"``).
+    """
+    sizes = [len(f) for f in frames]
+    columns = []
+    for k in keys:
+        types = {logical_type(f[k]) for f in frames} - {"empty"}
+        parts = [f[k] for f in frames]
+        if len(types) > 1 or types & {"mixed", "datetime_tz"}:
+            parts = [canonical_strings(p) for p in parts]
+        joined = pd.concat([p.reset_index(drop=True) for p in parts], ignore_index=True)
+        codes, _ = pd.factorize(joined, use_na_sentinel=True)
+        columns.append(codes.astype(np.int64))
+    if len(columns) == 1:
+        combined = columns[0]
+    else:
+        stacked = np.vstack(columns)
+        null = (stacked < 0).any(axis=0)
+        combined = np.full(stacked.shape[1], -1, dtype=np.int64)
+        if (~null).any():
+            ids, _ = pd.factorize(pd.MultiIndex.from_arrays(list(stacked[:, ~null])))
+            combined[~null] = ids
+    n = int(np.max(combined)) + 1 if len(combined) else 0
+    out, start = [], 0
+    for size in sizes:
+        out.append(combined[start : start + size])
+        start += size
+    return out, n
+
+
+def _first_rows(codes: np.ndarray, n: int) -> np.ndarray:
+    """Row position of the first occurrence of each code (``-1`` when absent)."""
+    first = np.full(n, -1, dtype=np.int64)
+    valid = np.flatnonzero(codes >= 0)
+    uniq, idx = np.unique(codes[valid], return_index=True)
+    first[uniq] = valid[idx]
+    return first
+
+
+def _profile(
+    frame: pd.DataFrame, keys: list[str], side: str, codes: np.ndarray, n: int
+) -> tuple[SideKeyProfile, np.ndarray]:
+    counts_all = np.bincount(codes[codes >= 0], minlength=n)
+    present = counts_all[counts_all > 0]
+    dup_codes = np.flatnonzero(counts_all > 1)
     examples: list[dict[str, Any]] = []
-    if len(dup):
-        top = dup.sort_values(ascending=False, kind="stable").head(10)
-        first = frame.loc[~null_mask].assign(_ck=ck[~null_mask.to_numpy()].to_numpy())
-        first = first.drop_duplicates("_ck").set_index("_ck")
-        for key_str, n in top.items():
-            row = first.loc[key_str, keys]
-            examples.append({"key": {k: row[k] for k in keys}, "count": int(n)})
-    return SideKeyProfile(
+    if len(dup_codes):
+        top = dup_codes[np.argsort(-counts_all[dup_codes], kind="stable")][:10]
+        first = _first_rows(codes, n)
+        for code in top:
+            row = frame.iloc[int(first[code])]
+            examples.append({"key": {k: row[k] for k in keys}, "count": int(counts_all[code])})
+    profile = SideKeyProfile(
         side=side,
         rows=len(frame),
-        unique_keys=len(counts),
-        duplicate_keys=len(dup),
-        rows_in_duplicate_keys=int(dup.sum()),
-        max_multiplicity=int(counts.max()) if len(counts) else 0,
-        mean_records_per_key=float(counts.mean()) if len(counts) else 0.0,
-        multiplicity_distribution=_bucket_distribution(counts),
-        null_keys=int(null_mask.sum()),
+        unique_keys=len(present),
+        duplicate_keys=len(dup_codes),
+        rows_in_duplicate_keys=int(counts_all[dup_codes].sum()),
+        max_multiplicity=int(np.max(present)) if len(present) else 0,
+        mean_records_per_key=float(np.mean(present)) if len(present) else 0.0,
+        multiplicity_distribution=_bucket_distribution(pd.Series(present)),
+        null_keys=int((codes < 0).sum()),
         dtypes={k: logical_type(frame[k]) for k in keys},
         format_issues={k: _format_issues(frame[k]) for k in keys},
         duplicate_examples=examples,
     )
+    return profile, counts_all
+
+
+def profile_keys(frame: pd.DataFrame, keys: list[str], side: str = "dataset") -> SideKeyProfile:
+    """Uniqueness, nulls and formatting of ``keys`` in a single dataset."""
+    (codes,), n = key_codes([frame], keys)
+    return _profile(frame, keys, side, codes, n)[0]
 
 
 def _relationship(left_unique: bool, right_unique: bool) -> Relationship:
@@ -189,81 +244,95 @@ def _relationship(left_unique: bool, right_unique: bool) -> Relationship:
     return "many-to-many"
 
 
-def diagnose_normalizations(left_only: set[str], right_only: set[str]) -> list[dict[str, Any]]:
+def diagnose_normalizations(
+    left_only: set[str], right_only: set[str], max_keys: int = 200_000
+) -> list[dict[str, Any]]:
     """Count unmatched keys that *would* match if a normalisation were applied to both sides."""
     if not left_only or not right_only:
         return []
+    sampled = len(left_only) > max_keys or len(right_only) > max_keys
+    lo = sorted(left_only)[:max_keys] if sampled else left_only
+    ro = sorted(right_only)[:max_keys] if sampled else right_only
     out: list[dict[str, Any]] = []
     for name, fn in KEY_NORMALIZATIONS.items():
-        right_norm = {fn(k) for k in right_only}
-        hits = [k for k in left_only if fn(k) in right_norm]
+        right_norm = {fn(k) for k in ro}
+        hits = [k for k in lo if fn(k) in right_norm]
         if hits:
             out.append(
                 {
                     "normalization": name,
                     "would_match": len(hits),
-                    "share_of_left_only": len(hits) / len(left_only),
+                    "share_of_left_only": len(hits) / len(lo),
                     "examples": [h.replace(SEP, " | ") for h in sorted(hits)[:5]],
+                    "sampled": sampled,
                 }
             )
     out.sort(key=lambda d: -int(d["would_match"]))
     return out
 
 
-def duplicate_key_table(left: pd.DataFrame, right: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
-    """Every key duplicated on either side, with its row count on each side."""
-    parts = []
-    for frame, side in ((left, "left"), (right, "right")):
-        valid = frame.loc[~frame[keys].isna().any(axis=1), keys]
-        ck = combined_key(valid, keys)
-        counts = ck.value_counts()
-        firsts = valid.assign(_ck=ck.to_numpy()).drop_duplicates("_ck").set_index("_ck")
-        parts.append((counts, firsts, side))
-    (lc, lf, _), (rc, rf, _) = parts
-    dup_index = lc.index[lc > 1].union(rc.index[rc > 1])
-    if len(dup_index) == 0:
-        return pd.DataFrame(
-            {**{k: pd.Series(dtype=object) for k in keys}, "left_count": [], "right_count": []}
-        )
-    firsts = pd.concat([lf, rf[~rf.index.isin(lf.index)]])
-    out = firsts.loc[dup_index, keys].reset_index(drop=True)
-    out["left_count"] = lc.reindex(dup_index, fill_value=0).to_numpy()
-    out["right_count"] = rc.reindex(dup_index, fill_value=0).to_numpy()
-    total = out["left_count"] + out["right_count"]
-    order = (-total).argsort(kind="stable")
-    return out.iloc[order].reset_index(drop=True)
+def _key_strings(frame: pd.DataFrame, keys: list[str], rows: np.ndarray) -> set[str]:
+    if len(rows) == 0:
+        return set()
+    return set(combined_key(frame.iloc[rows].reset_index(drop=True), keys))
 
 
-def analyze_keys(left: pd.DataFrame, right: pd.DataFrame, keys: list[str]) -> KeyAnalysis:
-    """Analyse ``keys`` on both datasets (which must already use the same key column names)."""
-    lk, rk = combined_key(left, keys), combined_key(right, keys)
-    lp = profile_side(left, keys, "left", lk)
-    rp = profile_side(right, keys, "right", rk)
+def analyze_keys_with_duplicates(
+    left: pd.DataFrame, right: pd.DataFrame, keys: list[str]
+) -> tuple[KeyAnalysis, pd.DataFrame]:
+    """Key analysis plus the table of every key duplicated on either side."""
+    (lcodes, rcodes), n = key_codes([left, right], keys)
+    lp, lc = _profile(left, keys, "left", lcodes, n)
+    rp, rc = _profile(right, keys, "right", rcodes, n)
     dtype_mismatches = [
         {"column": k, "left": lp.dtypes[k], "right": rp.dtypes[k]}
         for k in keys
         if lp.dtypes[k] != rp.dtypes[k] and not compatible_types(lp.dtypes[k], rp.dtypes[k])
     ]
-    lcounts = lk[~left[keys].isna().any(axis=1).to_numpy()].value_counts()
-    rcounts = rk[~right[keys].isna().any(axis=1).to_numpy()].value_counts()
-    common = lcounts.index.intersection(rcounts.index)
-    left_only = set(lcounts.index.difference(rcounts.index))
-    right_only = set(rcounts.index.difference(lcounts.index))
-    naive = int(
-        np.dot(
-            lcounts.loc[common].to_numpy(dtype=np.int64),
-            rcounts.loc[common].to_numpy(dtype=np.int64),
+    common = (lc > 0) & (rc > 0)
+    left_only = np.flatnonzero((lc > 0) & (rc == 0))
+    right_only = np.flatnonzero((rc > 0) & (lc == 0))
+    lfirst, rfirst = _first_rows(lcodes, n), _first_rows(rcodes, n)
+    diagnosis = []
+    if len(left_only) and len(right_only):
+        diagnosis = diagnose_normalizations(
+            _key_strings(left, keys, lfirst[left_only]),
+            _key_strings(right, keys, rfirst[right_only]),
         )
-    )
-    return KeyAnalysis(
+    analysis = KeyAnalysis(
         keys=keys,
         left=lp,
         right=rp,
         relationship=_relationship(lp.is_unique, rp.is_unique),
         dtype_mismatches=dtype_mismatches,
-        common_keys=len(common),
+        common_keys=int(common.sum()),
         left_only_keys=len(left_only),
         right_only_keys=len(right_only),
-        naive_join_rows=naive,
-        normalization_diagnosis=diagnose_normalizations(left_only, right_only),
+        naive_join_rows=int(np.dot(lc.astype(np.int64), rc.astype(np.int64))),
+        normalization_diagnosis=diagnosis,
     )
+    dup = np.flatnonzero((lc > 1) | (rc > 1))
+    if len(dup) == 0:
+        table = pd.DataFrame(
+            {**{k: pd.Series(dtype=object) for k in keys}, "left_count": [], "right_count": []}
+        )
+        return analysis, table
+    from_left = lfirst[dup] >= 0
+    lrows = left.iloc[lfirst[dup][from_left]][keys].reset_index(drop=True)
+    rrows = right.iloc[rfirst[dup][~from_left]][keys].reset_index(drop=True)
+    table = pd.concat([lrows, rrows], ignore_index=True)
+    ordered = np.concatenate([dup[from_left], dup[~from_left]])
+    table["left_count"] = lc[ordered]
+    table["right_count"] = rc[ordered]
+    order = np.argsort(-(table["left_count"] + table["right_count"]).to_numpy(), kind="stable")
+    return analysis, table.iloc[order].reset_index(drop=True)
+
+
+def duplicate_key_table(left: pd.DataFrame, right: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
+    """Every key duplicated on either side, with its row count on each side."""
+    return analyze_keys_with_duplicates(left, right, keys)[1]
+
+
+def analyze_keys(left: pd.DataFrame, right: pd.DataFrame, keys: list[str]) -> KeyAnalysis:
+    """Analyse ``keys`` on both datasets (which must already use the same key column names)."""
+    return analyze_keys_with_duplicates(left, right, keys)[0]

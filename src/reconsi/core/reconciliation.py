@@ -31,7 +31,7 @@ from reconsi.findings.generate import generate_findings, recommendations
 from reconsi.fingerprints.fingerprint import fingerprint_source
 from reconsi.history.store import HistoryStore
 from reconsi.inputs.sources import TableSource, as_source
-from reconsi.keys.analysis import analyze_keys, duplicate_key_table
+from reconsi.keys.analysis import analyze_keys_with_duplicates
 from reconsi.rules.engine import RuleContext, RuleSet, overall_status
 from reconsi.schema.compare import diff_schemas
 from reconsi.schema.inspect import ColumnSchema, TableSchema
@@ -230,8 +230,7 @@ class _Run:
         self._align_key_types(keys)
 
         key_frames = (b.fetch("left", keys), b.fetch("right", keys))
-        key_analysis = analyze_keys(*key_frames, keys)
-        duplicates = duplicate_key_table(*key_frames, keys)
+        key_analysis, duplicates = analyze_keys_with_duplicates(*key_frames, keys)
         del key_frames
         if (
             key_analysis.relationship != "one-to-one"

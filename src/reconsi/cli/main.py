@@ -285,8 +285,7 @@ def cmd_schema(args: argparse.Namespace) -> int:
 def cmd_inspect(args: argparse.Namespace) -> int:
     from reconsi.aggregation.grain import infer_grain
     from reconsi.inputs.sources import as_source
-    from reconsi.keys.analysis import profile_side
-    from reconsi.keys.canonical import combined_key
+    from reconsi.keys.analysis import profile_keys
     from reconsi.schema.inspect import inspect_schema
 
     keys = _csv(args.keys) or []
@@ -300,7 +299,7 @@ def cmd_inspect(args: argparse.Namespace) -> int:
             raise ConfigurationError(
                 f"key columns {missing} not found; available: {list(frame.columns)}"
             )
-        out["keys"] = profile_side(frame, keys, "dataset", combined_key(frame, keys)).to_dict()
+        out["keys"] = profile_keys(frame, keys).to_dict()
     if args.json:
         print(json.dumps(to_jsonable(out), indent=2))
         return EXIT_OK
