@@ -94,6 +94,8 @@ class RuleConfig(_Strict):
             raise ValueError(f"rule {self.name!r}: set `metric`, `column`, or both")
         if self.metric in COLUMN_METRICS and self.column is None:
             raise ValueError(f"rule {self.name!r}: metric {self.metric} needs a `column`")
+        if self.metric == "match_percentage" and self.min is None:
+            raise ValueError(f"rule {self.name!r}: match_percentage rules need a `min`")
         return self
 
     @property

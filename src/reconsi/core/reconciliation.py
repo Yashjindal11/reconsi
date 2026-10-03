@@ -25,9 +25,10 @@ from reconsi.core.dtypes import logical_type
 from reconsi.core.errors import ConfigurationError
 from reconsi.core.profiling import detect_date_column, detect_dimensions
 from reconsi.core.result import ReconciliationResult
-from reconsi.core.types import DuplicateStrategy, RecordStatus, Status
+from reconsi.core.types import DuplicateStrategy, RecordStatus
 from reconsi.inputs.sources import TableSource, as_source
 from reconsi.keys.analysis import analyze_keys, duplicate_key_table
+from reconsi.rules.engine import RuleContext, RuleSet, overall_status
 from reconsi.schema.compare import diff_schemas
 from reconsi.schema.inspect import ColumnSchema, TableSchema
 from reconsi.statistics.bias import detect_bias
@@ -277,9 +278,10 @@ class _Run:
             records, acc, ambiguous, key_analysis, compare, join_keys, left_rows, right_rows
         )
         self._statistics(acc, records, compare, kinds, dimensions)
-        status = Status.PASS
-        if summary["missing_left"] or summary["missing_right"] or summary["value_mismatch_records"]:
-            status = Status.FAIL
+        rule_results = RuleSet.from_config(cfg, compare).evaluate(
+            RuleContext(summary=summary, columns=acc.columns, schema=schema)
+        )
+        status = overall_status(rule_results)
         metadata = {
             "reconsi_version": __version__,
             "python_version": platform.python_version(),
@@ -309,6 +311,7 @@ class _Run:
             metadata=metadata,
             notes=self.notes,
             analyses=self.analyses,
+            rule_results=rule_results,
         )
 
     # ------------------------------------------------------------------ analyses
