@@ -1,0 +1,108 @@
+{
+  "machine": {
+    "python": "3.12.15",
+    "platform": "macOS-26.6.2",
+    "cpu": "Apple M4",
+    "memory_bytes": "17179869184",
+    "pandas": "3.0.6",
+    "duckdb": "1.5.6"
+  },
+  "runs": [
+    {
+      "seconds": 0.6406359160027932,
+      "import_seconds": 1.4159400839998852,
+      "peak_rss_mb": 235.634688,
+      "matched": 9750,
+      "value_mismatch_records": 50,
+      "missing": 300,
+      "rows": 10000,
+      "backend": "duckdb",
+      "repeat": 0,
+      "rows_per_second": 31218.980235745632
+    },
+    {
+      "seconds": 0.44683816700126044,
+      "import_seconds": 1.4106662919948576,
+      "peak_rss_mb": 206.0288,
+      "matched": 9750,
+      "value_mismatch_records": 50,
+      "missing": 300,
+      "rows": 10000,
+      "backend": "pandas",
+      "repeat": 0,
+      "rows_per_second": 44758.93394295386
+    },
+    {
+      "seconds": 1.7278847909910837,
+      "import_seconds": 1.4235716669936664,
+      "peak_rss_mb": 427.769856,
+      "matched": 97500,
+      "value_mismatch_records": 500,
+      "missing": 3000,
+      "rows": 100000,
+      "backend": "duckdb",
+      "repeat": 0,
+      "rows_per_second": 115748.45790805508
+    },
+    {
+      "seconds": 1.234707416006131,
+      "import_seconds": 1.5252694160008105,
+      "peak_rss_mb": 361.578496,
+      "matched": 97500,
+      "value_mismatch_records": 500,
+      "missing": 3000,
+      "rows": 100000,
+      "backend": "pandas",
+      "repeat": 0,
+      "rows_per_second": 161981.69494027473
+    },
+    {
+      "seconds": 8.380850665998878,
+      "import_seconds": 1.3902249579987256,
+      "peak_rss_mb": 2266.529792,
+      "matched": 975000,
+      "value_mismatch_records": 5000,
+      "missing": 30000,
+      "rows": 1000000,
+      "backend": "duckdb",
+      "repeat": 0,
+      "rows_per_second": 238639.25986821394
+    },
+    {
+      "seconds": 6.18633129200316,
+      "import_seconds": 1.407875624994631,
+      "peak_rss_mb": 1649.115136,
+      "matched": 975000,
+      "value_mismatch_records": 5000,
+      "missing": 30000,
+      "rows": 1000000,
+      "backend": "pandas",
+      "repeat": 0,
+      "rows_per_second": 323293.38756644435
+    },
+    {
+      "seconds": 76.2139336669934,
+      "import_seconds": 2.216975833012839,
+      "peak_rss_mb": 5954.469888,
+      "matched": 9750000,
+      "value_mismatch_records": 50000,
+      "missing": 300000,
+      "rows": 10000000,
+      "backend": "duckdb",
+      "repeat": 0,
+      "rows_per_second": 262419.20653757785
+    },
+    {
+      "seconds": 88.33238816600351,
+      "import_seconds": 2.2154110409901477,
+      "peak_rss_mb": 4683.186176,
+      "matched": 9750000,
+      "value_mismatch_records": 50000,
+      "missing": 300000,
+      "rows": 10000000,
+      "backend": "pandas",
+      "repeat": 0,
+      "rows_per_second": 226417.51700875445
+    }
+  ]
+}
