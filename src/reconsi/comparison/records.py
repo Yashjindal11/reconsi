@@ -42,6 +42,7 @@ class ColumnStatistics:
     mismatch_differences: dict[str, Any] | None = None
     relative_differences: dict[str, Any] | None = None
     totals: dict[str, float | None] | None = None
+    histogram: dict[str, list[float]] | None = None
 
     @property
     def match_rate(self) -> float:
@@ -86,9 +87,22 @@ class ColumnStatistics:
                 "mismatch_differences": self.mismatch_differences,
                 "relative_differences": self.relative_differences,
                 "totals": self.totals,
+                "mismatch_histogram": self.histogram,
                 "hints": self.hints,
             }
         )
+
+
+def difference_histogram(values: np.ndarray, bins: int = 30) -> dict[str, list[float]] | None:
+    """Histogram of finite differences (for charts)."""
+    v = values[np.isfinite(values)]
+    if len(v) == 0:
+        return None
+    try:
+        counts, edges = np.histogram(v, bins=bins)
+    except ValueError:  # range too narrow for float bins
+        counts, edges = np.array([len(v)]), np.array([v.min(), v.max()])
+    return {"counts": [float(c) for c in counts], "edges": [float(e) for e in edges]}
 
 
 def _merge_hints(acc: list[dict[str, Any]], new: list[dict[str, Any]]) -> None:
@@ -276,6 +290,7 @@ class RecordAccumulator:
                 stats.differences = describe_differences(diffs)
                 mdiffs = np.concatenate(self._mismatch_diffs[col])
                 stats.mismatch_differences = describe_differences(mdiffs)
+                stats.histogram = difference_histogram(mdiffs)
                 if self._rel[col]:
                     stats.relative_differences = describe_differences(
                         np.concatenate(self._rel[col])

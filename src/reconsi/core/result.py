@@ -183,6 +183,14 @@ class ReconciliationResult:
 
         return export_evidence(self, directory, formats)
 
+    def to_markdown(self, path: str | Path | None = None) -> str:
+        from reconsi.reports.markdown import render_markdown
+
+        text = render_markdown(self.to_dict())
+        if path is not None:
+            Path(path).write_text(text, encoding="utf-8")
+        return text
+
     def to_dict(self, sample_size: int | None = None) -> dict[str, Any]:
         n = self.config.sample_size if sample_size is None else sample_size
         return json_dict(
