@@ -1,0 +1,2388 @@
+{
+ "version": "0.1.0.dev0",
+ "rows": 20000,
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "runs": [
+  {
+   "scenario": "clean",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "PASS",
+   "seconds": 0.26555437500064727
+  },
+  {
+   "scenario": "clean",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "PASS",
+   "seconds": 0.2415725840110099
+  },
+  {
+   "scenario": "clean",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "PASS",
+   "seconds": 0.23364354200020898
+  },
+  {
+   "scenario": "clean",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "PASS",
+   "seconds": 0.23488499999803025
+  },
+  {
+   "scenario": "clean",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "PASS",
+   "seconds": 0.23288466599478852
+  },
+  {
+   "scenario": "missing_and_extra",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 400,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.350474499995471
+  },
+  {
+   "scenario": "missing_and_extra",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 400,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.34419087501009926
+  },
+  {
+   "scenario": "missing_and_extra",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 400,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.34546070800570305
+  },
+  {
+   "scenario": "missing_and_extra",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 400,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.34320758300600573
+  },
+  {
+   "scenario": "missing_and_extra",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 400,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.34594895799818914
+  },
+  {
+   "scenario": "value_mismatches",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.3012671659962507
+  },
+  {
+   "scenario": "value_mismatches",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.2967732499964768
+  },
+  {
+   "scenario": "value_mismatches",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.2959109170042211
+  },
+  {
+   "scenario": "value_mismatches",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.3008970840019174
+  },
+  {
+   "scenario": "value_mismatches",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.2978178749908693
+  },
+  {
+   "scenario": "duplicates",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.42990724999981467
+  },
+  {
+   "scenario": "duplicates",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.42617466699448414
+  },
+  {
+   "scenario": "duplicates",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.4254226250050124
+  },
+  {
+   "scenario": "duplicates",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.43190687499009073
+  },
+  {
+   "scenario": "duplicates",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.4273601669992786
+  },
+  {
+   "scenario": "rounding_with_tolerance",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "PASS",
+   "seconds": 0.24241774999245536
+  },
+  {
+   "scenario": "rounding_with_tolerance",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "PASS",
+   "seconds": 0.24041512499388773
+  },
+  {
+   "scenario": "rounding_with_tolerance",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "PASS",
+   "seconds": 0.23905791700235568
+  },
+  {
+   "scenario": "rounding_with_tolerance",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "PASS",
+   "seconds": 0.23996774999250192
+  },
+  {
+   "scenario": "rounding_with_tolerance",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "PASS",
+   "seconds": 0.24140733300009742
+  },
+  {
+   "scenario": "rounding_without_tolerance",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 387,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.31863445800263435
+  },
+  {
+   "scenario": "rounding_without_tolerance",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 386,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.2956732919992646
+  },
+  {
+   "scenario": "rounding_without_tolerance",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 388,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.2907395829970483
+  },
+  {
+   "scenario": "rounding_without_tolerance",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 387,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.2888048340100795
+  },
+  {
+   "scenario": "rounding_without_tolerance",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 388,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "status": "FAIL",
+   "seconds": 0.2868122080108151
+  },
+  {
+   "scenario": "timestamp_shift",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "timezone_hint": true,
+   "status": "FAIL",
+   "seconds": 0.288685917010298
+  },
+  {
+   "scenario": "timestamp_shift",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "timezone_hint": true,
+   "status": "FAIL",
+   "seconds": 0.2869180830020923
+  },
+  {
+   "scenario": "timestamp_shift",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "timezone_hint": true,
+   "status": "FAIL",
+   "seconds": 0.28438095800811425
+  },
+  {
+   "scenario": "timestamp_shift",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "timezone_hint": true,
+   "status": "FAIL",
+   "seconds": 0.2876587089995155
+  },
+  {
+   "scenario": "timestamp_shift",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "timezone_hint": true,
+   "status": "FAIL",
+   "seconds": 0.2873430830077268
+  },
+  {
+   "scenario": "string_formatting",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "formatting_hint": true,
+   "status": "FAIL",
+   "seconds": 0.2772450419870438
+  },
+  {
+   "scenario": "string_formatting",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "formatting_hint": true,
+   "status": "FAIL",
+   "seconds": 0.2761102919903351
+  },
+  {
+   "scenario": "string_formatting",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "formatting_hint": true,
+   "status": "FAIL",
+   "seconds": 0.29344408299948554
+  },
+  {
+   "scenario": "string_formatting",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "formatting_hint": true,
+   "status": "FAIL",
+   "seconds": 0.27930991700850427
+  },
+  {
+   "scenario": "string_formatting",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 100,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "formatting_hint": true,
+   "status": "FAIL",
+   "seconds": 0.2792101250088308
+  },
+  {
+   "scenario": "systematic_bias_segment",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 5177,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": true,
+   "systematic_expected": true,
+   "segment_found": true,
+   "status": "FAIL",
+   "seconds": 0.31543508400500286
+  },
+  {
+   "scenario": "systematic_bias_segment",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 5139,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": true,
+   "systematic_expected": true,
+   "segment_found": true,
+   "status": "FAIL",
+   "seconds": 0.43530962499789894
+  },
+  {
+   "scenario": "systematic_bias_segment",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 5084,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": true,
+   "systematic_expected": true,
+   "segment_found": true,
+   "status": "FAIL",
+   "seconds": 0.32598862500162795
+  },
+  {
+   "scenario": "systematic_bias_segment",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 5061,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": true,
+   "systematic_expected": true,
+   "segment_found": true,
+   "status": "FAIL",
+   "seconds": 0.3456067500083009
+  },
+  {
+   "scenario": "systematic_bias_segment",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 5126,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": true,
+   "systematic_expected": true,
+   "segment_found": true,
+   "status": "FAIL",
+   "seconds": 0.318329542002175
+  },
+  {
+   "scenario": "segment_missing",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "missing_segment_found": true,
+   "status": "FAIL",
+   "seconds": 0.31428108298860025
+  },
+  {
+   "scenario": "segment_missing",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "missing_segment_found": true,
+   "status": "FAIL",
+   "seconds": 0.3096547499881126
+  },
+  {
+   "scenario": "segment_missing",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "missing_segment_found": true,
+   "status": "FAIL",
+   "seconds": 0.31017520900059026
+  },
+  {
+   "scenario": "segment_missing",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "missing_segment_found": true,
+   "status": "FAIL",
+   "seconds": 0.3148477500071749
+  },
+  {
+   "scenario": "segment_missing",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 200,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "missing_segment_found": true,
+   "status": "FAIL",
+   "seconds": 0.31167287498828955
+  },
+  {
+   "scenario": "incident_window",
+   "seed": 0,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 669,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "change_points_found": true,
+   "spurious_change_points": 0,
+   "status": "FAIL",
+   "seconds": 0.28857712500030175
+  },
+  {
+   "scenario": "incident_window",
+   "seed": 1,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 658,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "change_points_found": true,
+   "spurious_change_points": 0,
+   "status": "FAIL",
+   "seconds": 0.2924113749904791
+  },
+  {
+   "scenario": "incident_window",
+   "seed": 2,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 649,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "change_points_found": true,
+   "spurious_change_points": 0,
+   "status": "FAIL",
+   "seconds": 0.2852280829974916
+  },
+  {
+   "scenario": "incident_window",
+   "seed": 3,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 658,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "change_points_found": true,
+   "spurious_change_points": 0,
+   "status": "FAIL",
+   "seconds": 0.28991449999739416
+  },
+  {
+   "scenario": "incident_window",
+   "seed": 4,
+   "rows": 20000,
+   "missing_from_right": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "missing_from_left": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "value_mismatches": {
+    "tp": 662,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "duplicate_keys": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "systematic_detected": false,
+   "systematic_expected": false,
+   "change_points_found": true,
+   "spurious_change_points": 0,
+   "status": "FAIL",
+   "seconds": 0.3038997499970719
+  },
+  {
+   "scenario": "grain_difference",
+   "seed": 0,
+   "rows": 20000,
+   "value_mismatches": {
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "status": "FAIL",
+   "naive_value_mismatch_records": 0,
+   "naive_ambiguous_records": 20030,
+   "grain_diagnosed": true,
+   "seconds": 0.48716416700335685
+  },
+  {
+   "scenario": "grain_difference",
+   "seed": 1,
+   "rows": 20000,
+   "value_mismatches": {
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "status": "FAIL",
+   "naive_value_mismatch_records": 0,
+   "naive_ambiguous_records": 20030,
+   "grain_diagnosed": true,
+   "seconds": 0.5514465419983026
+  },
+  {
+   "scenario": "grain_difference",
+   "seed": 2,
+   "rows": 20000,
+   "value_mismatches": {
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "status": "FAIL",
+   "naive_value_mismatch_records": 0,
+   "naive_ambiguous_records": 20030,
+   "grain_diagnosed": true,
+   "seconds": 0.5865205419977428
+  },
+  {
+   "scenario": "grain_difference",
+   "seed": 3,
+   "rows": 20000,
+   "value_mismatches": {
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "status": "FAIL",
+   "naive_value_mismatch_records": 0,
+   "naive_ambiguous_records": 20030,
+   "grain_diagnosed": true,
+   "seconds": 0.5913089999958174
+  },
+  {
+   "scenario": "grain_difference",
+   "seed": 4,
+   "rows": 20000,
+   "value_mismatches": {
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "status": "FAIL",
+   "naive_value_mismatch_records": 0,
+   "naive_ambiguous_records": 20030,
+   "grain_diagnosed": true,
+   "seconds": 0.6118998339952668
+  }
+ ]
+}
