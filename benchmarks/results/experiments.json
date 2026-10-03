@@ -1,0 +1,273 @@
+{
+ "meta": {
+  "version": "0.1.0.dev0",
+  "trials": 200,
+  "trials_small": 100,
+  "e1_rows": 20000,
+  "e3_rows": 20000,
+  "seconds": 58.67684033300611
+ },
+ "e1": [
+  {
+   "bad_days": 0,
+   "seed": 0,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 0,
+   "diagnosis_says_grain_explains": true
+  },
+  {
+   "bad_days": 0,
+   "seed": 1,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 0,
+   "diagnosis_says_grain_explains": true
+  },
+  {
+   "bad_days": 0,
+   "seed": 2,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 0,
+   "diagnosis_says_grain_explains": true
+  },
+  {
+   "bad_days": 0,
+   "seed": 3,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 0,
+   "diagnosis_says_grain_explains": true
+  },
+  {
+   "bad_days": 0,
+   "seed": 4,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 0,
+   "diagnosis_says_grain_explains": true
+  },
+  {
+   "bad_days": 1,
+   "seed": 0,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 1,
+   "diagnosis_says_grain_explains": false
+  },
+  {
+   "bad_days": 1,
+   "seed": 1,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 1,
+   "diagnosis_says_grain_explains": false
+  },
+  {
+   "bad_days": 1,
+   "seed": 2,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 1,
+   "diagnosis_says_grain_explains": false
+  },
+  {
+   "bad_days": 1,
+   "seed": 3,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 1,
+   "diagnosis_says_grain_explains": false
+  },
+  {
+   "bad_days": 1,
+   "seed": 4,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 1,
+   "diagnosis_says_grain_explains": false
+  },
+  {
+   "bad_days": 3,
+   "seed": 0,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 3,
+   "diagnosis_says_grain_explains": false
+  },
+  {
+   "bad_days": 3,
+   "seed": 1,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 3,
+   "diagnosis_says_grain_explains": false
+  },
+  {
+   "bad_days": 3,
+   "seed": 2,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 3,
+   "diagnosis_says_grain_explains": false
+  },
+  {
+   "bad_days": 3,
+   "seed": 3,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 3,
+   "diagnosis_says_grain_explains": false
+  },
+  {
+   "bad_days": 3,
+   "seed": 4,
+   "naive_first_flagged_days": 30,
+   "aggregation_aware_flagged_days": 3,
+   "diagnosis_says_grain_explains": false
+  }
+ ],
+ "e2": [
+  {
+   "differing_pairs": 10,
+   "scenario": "random",
+   "flagged_rate": 0.0
+  },
+  {
+   "differing_pairs": 10,
+   "scenario": "systematic",
+   "flagged_rate": 1.0
+  },
+  {
+   "differing_pairs": 10,
+   "scenario": "mixed_70_30",
+   "flagged_rate": 0.165
+  },
+  {
+   "differing_pairs": 10,
+   "scenario": "mixed_60_40",
+   "flagged_rate": 0.065
+  },
+  {
+   "differing_pairs": 25,
+   "scenario": "random",
+   "flagged_rate": 0.01
+  },
+  {
+   "differing_pairs": 25,
+   "scenario": "systematic",
+   "flagged_rate": 1.0
+  },
+  {
+   "differing_pairs": 25,
+   "scenario": "mixed_70_30",
+   "flagged_rate": 0.95
+  },
+  {
+   "differing_pairs": 25,
+   "scenario": "mixed_60_40",
+   "flagged_rate": 0.59
+  },
+  {
+   "differing_pairs": 50,
+   "scenario": "random",
+   "flagged_rate": 0.0
+  },
+  {
+   "differing_pairs": 50,
+   "scenario": "systematic",
+   "flagged_rate": 1.0
+  },
+  {
+   "differing_pairs": 50,
+   "scenario": "mixed_70_30",
+   "flagged_rate": 1.0
+  },
+  {
+   "differing_pairs": 50,
+   "scenario": "mixed_60_40",
+   "flagged_rate": 0.845
+  },
+  {
+   "differing_pairs": 100,
+   "scenario": "random",
+   "flagged_rate": 0.0
+  },
+  {
+   "differing_pairs": 100,
+   "scenario": "systematic",
+   "flagged_rate": 1.0
+  },
+  {
+   "differing_pairs": 100,
+   "scenario": "mixed_70_30",
+   "flagged_rate": 1.0
+  },
+  {
+   "differing_pairs": 100,
+   "scenario": "mixed_60_40",
+   "flagged_rate": 0.98
+  },
+  {
+   "differing_pairs": 500,
+   "scenario": "random",
+   "flagged_rate": 0.0
+  },
+  {
+   "differing_pairs": 500,
+   "scenario": "systematic",
+   "flagged_rate": 1.0
+  },
+  {
+   "differing_pairs": 500,
+   "scenario": "mixed_70_30",
+   "flagged_rate": 1.0
+  },
+  {
+   "differing_pairs": 500,
+   "scenario": "mixed_60_40",
+   "flagged_rate": 1.0
+  }
+ ],
+ "e3": [
+  {
+   "segment_rate_multiplier": 1.0,
+   "correct_segment_rate": 0.0,
+   "any_flag_rate": 0.0
+  },
+  {
+   "segment_rate_multiplier": 1.5,
+   "correct_segment_rate": 0.07,
+   "any_flag_rate": 0.07
+  },
+  {
+   "segment_rate_multiplier": 2.0,
+   "correct_segment_rate": 0.84,
+   "any_flag_rate": 0.84
+  },
+  {
+   "segment_rate_multiplier": 3.0,
+   "correct_segment_rate": 1.0,
+   "any_flag_rate": 1.0
+  },
+  {
+   "segment_rate_multiplier": 5.0,
+   "correct_segment_rate": 1.0,
+   "any_flag_rate": 1.0
+  }
+ ],
+ "e4": [
+  {
+   "incident_rate_multiplier": 1.0,
+   "both_boundaries_found": NaN,
+   "spurious_change_points_per_series": 0.04
+  },
+  {
+   "incident_rate_multiplier": 1.5,
+   "both_boundaries_found": 0.0,
+   "spurious_change_points_per_series": 0.03
+  },
+  {
+   "incident_rate_multiplier": 2.0,
+   "both_boundaries_found": 0.1,
+   "spurious_change_points_per_series": 0.04
+  },
+  {
+   "incident_rate_multiplier": 3.0,
+   "both_boundaries_found": 0.77,
+   "spurious_change_points_per_series": 0.02
+  },
+  {
+   "incident_rate_multiplier": 5.0,
+   "both_boundaries_found": 0.99,
+   "spurious_change_points_per_series": 0.0
+  }
+ ]
+}
