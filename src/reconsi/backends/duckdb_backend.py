@@ -311,10 +311,11 @@ class DuckDBBackend(TableBackend):
         )
         values = [f"l.{q(c)} AS {q(LEFT_PREFIX + c)}" for c in left_columns]
         values += [f"r.{q(c)} AS {q(RIGHT_PREFIX + c)}" for c in right_columns]
+        # No ORDER BY: sorting would force DuckDB to materialise the whole join. Evidence tables
+        # are sorted by key afterwards, so output order does not depend on the backend.
         sql = (
             f"SELECT {', '.join([key_sql, side, *values])} FROM {self._t('left')} l "
-            f"FULL OUTER JOIN {self._t('right')} r ON {on} "
-            f"ORDER BY l.{q(ROW)} NULLS LAST, r.{q(ROW)}"
+            f"FULL OUTER JOIN {self._t('right')} r ON {on}"
         )
         result = self.con.execute(sql)
         to_reader = getattr(result, "to_arrow_reader", None)

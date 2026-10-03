@@ -191,10 +191,11 @@ class RecordAccumulator:
         records = chunk[self.keys].copy()
         records[STATUS] = status
         records[MISMATCHED_COLUMNS] = mism
+        # Assign Series (same index) rather than numpy arrays: avoids re-inferring string dtypes.
         for d in self.dimensions:
-            records[DIM_PREFIX + d] = self._side_value(chunk, d).to_numpy()
+            records[DIM_PREFIX + d] = self._side_value(chunk, d)
         if self.date_column is not None:
-            records[DATE] = self._side_value(chunk, self.date_column).to_numpy()
+            records[DATE] = self._side_value(chunk, self.date_column)
         self._records.append(records)
         self._collect_missing(chunk, side)
 
@@ -314,8 +315,18 @@ class RecordAccumulator:
         parts = self._rel.get(col) or []
         return np.concatenate(parts) if parts else np.array([], dtype=float)
 
+    def _sorted(self, frame: pd.DataFrame, extra: list[str] | None = None) -> pd.DataFrame:
+        """Deterministic order regardless of backend/join order."""
+        by = [*self.keys, *(extra or [])]
+        try:
+            return frame.sort_values(by, kind="stable", na_position="last").reset_index(drop=True)
+        except TypeError:  # incomparable mixed-type keys: keep encounter order
+            return frame
+
     def records(self) -> pd.DataFrame:
-        return pd.concat(self._records, ignore_index=True) if self._records else pd.DataFrame()
+        if not self._records:
+            return pd.DataFrame()
+        return self._sorted(pd.concat(self._records, ignore_index=True))
 
     def mismatches(self) -> pd.DataFrame:
         if not self._mismatches:
@@ -329,11 +340,16 @@ class RecordAccumulator:
                 "mismatch_type",
             ]
             return pd.DataFrame({c: pd.Series(dtype=object) for c in cols})
-        return pd.concat(self._mismatches, ignore_index=True)
+        frame = pd.concat(self._mismatches, ignore_index=True)
+        order = {c: i for i, c in enumerate(self.compare_columns)}
+        frame["_col_order"] = frame["column"].map(order)
+        frame = self._sorted(frame, ["_col_order"]).drop(columns="_col_order")
+        self._mismatches = [frame]
+        return frame
 
     def missing(self, which: str) -> pd.DataFrame:
         parts = self._missing_left if which == "left" else self._missing_right
         cols = self.right_columns if which == "left" else self.left_columns
         if not parts:
             return pd.DataFrame({c: pd.Series(dtype=object) for c in self.keys + cols})
-        return pd.concat(parts, ignore_index=True)
+        return self._sorted(pd.concat(parts, ignore_index=True))
