@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -11,6 +12,30 @@ import pandas as pd
 from reconsi.comparison.options import DEFAULT_FLOAT_RELATIVE_TOLERANCE, ColumnOptions
 from reconsi.core.dtypes import logical_type, type_family
 from reconsi.core.types import MismatchType
+from reconsi.keys.canonical import canonical_strings
+
+STRING_NORMALIZERS: dict[str, Callable[[pd.Series], pd.Series]] = {
+    "trim": lambda s: s.str.strip(),
+    "lowercase": lambda s: s.str.lower(),
+    "casefold": lambda s: s.str.casefold(),
+    "collapse_whitespace": lambda s: s.str.replace(r"\s+", " ", regex=True).str.strip(),
+    "unicode_nfc": lambda s: s.str.normalize("NFC"),
+    "unicode_nfkc": lambda s: s.str.normalize("NFKC"),
+    "strip_leading_zeros": lambda s: s.str.replace(r"^(\s*)0+(?=\d)", r"\1", regex=True),
+}
+
+# Normalisations tried (but never applied) to explain string mismatches.
+_STRING_HINTS: list[tuple[str, list[str]]] = [
+    ("trim", ["trim"]),
+    ("casefold", ["casefold"]),
+    ("trim + casefold", ["trim", "casefold"]),
+    ("collapse_whitespace", ["collapse_whitespace"]),
+    ("unicode_nfkc", ["unicode_nfkc"]),
+    ("strip_leading_zeros", ["strip_leading_zeros"]),
+]
+
+_TRUE = frozenset({"true", "t", "yes", "y", "1"})
+_FALSE = frozenset({"false", "f", "no", "n", "0"})
 
 
 @dataclass
@@ -26,7 +51,8 @@ class ColumnComparison:
     relative_difference: np.ndarray | None = None
     datatype_mismatch: bool = False
     effective: dict[str, Any] = field(default_factory=dict)
-    notes: list[str] = field(default_factory=list)
+    hints: list[dict[str, Any]] = field(default_factory=list)
+    """Diagnostic clues, e.g. how many mismatches would vanish under an unconfigured normalisation."""
 
 
 def resolve_kind(left: pd.Series, right: pd.Series, options: ColumnOptions) -> tuple[str, bool]:
@@ -133,6 +159,93 @@ def compare_numeric(
     )
 
 
+def _text(series: pd.Series) -> pd.Series:
+    return canonical_strings(series).fillna("").astype(object)
+
+
+def apply_normalizations(text: pd.Series, steps: list[str]) -> pd.Series:
+    for step in steps:
+        text = STRING_NORMALIZERS[step](text)
+    return text
+
+
+def compare_string(
+    column: str, left: pd.Series, right: pd.Series, options: ColumnOptions
+) -> ColumnComparison:
+    ln, rn = _null_masks(left, right, options)
+    a = apply_normalizations(_text(left), list(options.normalize))
+    b = apply_normalizations(_text(right), list(options.normalize))
+    exact = (_text(left) == _text(right)).to_numpy()
+    equal_values = (a == b).to_numpy()
+    failed = np.zeros(len(a), dtype=bool)
+    equal, mtype = _finish(equal_values, ln, rn, failed, MismatchType.STRING, options)
+    hints: list[dict[str, Any]] = []
+    value_mismatch = mtype == MismatchType.STRING.value
+    n_mismatch = int(value_mismatch.sum())
+    if n_mismatch:
+        ma, mb = a[value_mismatch], b[value_mismatch]
+        for label, steps in _STRING_HINTS:
+            if set(steps) <= set(options.normalize):
+                continue
+            resolved = int(
+                (apply_normalizations(ma, steps) == apply_normalizations(mb, steps)).sum()
+            )
+            if resolved:
+                hints.append(
+                    {
+                        "kind": "string_normalization",
+                        "normalization": label,
+                        "would_resolve": resolved,
+                        "of_mismatches": n_mismatch,
+                    }
+                )
+        hints.sort(key=lambda h: -int(h["would_resolve"]))
+    return ColumnComparison(
+        column=column,
+        kind="string",
+        equal=equal,
+        mismatch_type=mtype,
+        within_tolerance=equal & ~exact & ~ln & ~rn,
+        effective={"normalize": list(options.normalize)},
+        hints=hints,
+    )
+
+
+def _to_bool(series: pd.Series) -> tuple[np.ndarray, np.ndarray]:
+    out = np.zeros(len(series), dtype=bool)
+    failed = np.zeros(len(series), dtype=bool)
+    for i, value in enumerate(series.tolist()):
+        if value is None or (isinstance(value, float) and np.isnan(value)) or value is pd.NA:
+            continue
+        if isinstance(value, bool | np.bool_):
+            out[i] = bool(value)
+            continue
+        token = str(value).strip().casefold()
+        if token.endswith(".0"):
+            token = token[:-2]
+        if token in _TRUE:
+            out[i] = True
+        elif token not in _FALSE:
+            failed[i] = True
+    return out, failed
+
+
+def compare_boolean(
+    column: str, left: pd.Series, right: pd.Series, options: ColumnOptions
+) -> ColumnComparison:
+    ln, rn = _null_masks(left, right, options)
+    a, af = _to_bool(left)
+    b, bf = _to_bool(right)
+    equal, mtype = _finish(a == b, ln, rn, af | bf, MismatchType.BOOLEAN, options)
+    return ColumnComparison(
+        column=column,
+        kind="boolean",
+        equal=equal,
+        mismatch_type=mtype,
+        within_tolerance=np.zeros(len(a), dtype=bool),
+    )
+
+
 def compare_column(
     column: str, left: pd.Series, right: pd.Series, options: ColumnOptions
 ) -> ColumnComparison:
@@ -142,6 +255,10 @@ def compare_column(
     kind, dtype_mismatch = resolve_kind(left, right, options)
     if kind == "numeric":
         result = compare_numeric(column, left, right, options)
+    elif kind == "boolean":
+        result = compare_boolean(column, left, right, options)
+    elif kind == "string":
+        result = compare_string(column, left, right, options)
     else:
         raise NotImplementedError(kind)
     result.datatype_mismatch = dtype_mismatch
