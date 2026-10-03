@@ -33,7 +33,9 @@ def test_large_integers_compared_exactly() -> None:
 def test_float_representation_is_not_a_mismatch() -> None:
     r = cmp([0.1 + 0.2], [0.3])
     assert r.equal.tolist() == [True]
-    assert r.within_tolerance.tolist() == [True]
+    # Representation-level noise counts as an exact match with zero difference.
+    assert r.within_tolerance.tolist() == [False]
+    assert r.difference.tolist() == [0.0]
 
 
 def test_absolute_tolerance() -> None:

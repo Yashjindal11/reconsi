@@ -144,6 +144,12 @@ def compare_numeric(
             diff = b - a
         tol = np.maximum(options.absolute_tolerance, rel_tol * np.maximum(np.abs(a), np.abs(b)))
         close = np.abs(diff) <= tol
+        # Differences at floating-point representation level are reported as exactly zero.
+        noise = np.abs(diff) <= DEFAULT_FLOAT_RELATIVE_TOLERANCE * np.maximum(np.abs(a), np.abs(b))
+        if both_int and options.decimals is None:
+            noise = np.zeros_like(noise)
+        diff = np.where(noise & ~exact, 0.0, diff)
+        exact = exact | noise
         rel = np.where(a != 0, diff / np.abs(a), np.nan)
     equal_values = exact | close
     equal, mtype = _finish(equal_values, ln, rn, failed, MismatchType.NUMERIC, options)
