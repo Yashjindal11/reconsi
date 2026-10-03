@@ -25,11 +25,11 @@ def test_frame_fingerprint_stable_and_sensitive() -> None:
 
 def test_file_fingerprint_full_and_sampled(tmp_path: Path) -> None:
     p = tmp_path / "a.csv"
-    p.write_text("id,v\n1,2\n")
+    p.write_bytes(b"id,v\n1,2\n")
     full = fingerprint_file(p, file_format="csv")
     assert full["method"] == "sha256" and full["size_bytes"] == 9
     copy = tmp_path / "b.csv"
-    copy.write_text("id,v\n1,2\n")
+    copy.write_bytes(b"id,v\n1,2\n")
     assert fingerprint_file(copy, file_format="csv")["digest"] == full["digest"]
     sampled = fingerprint_file(p, full_hash_limit=1)
     assert sampled["method"] == "sampled"
