@@ -17,6 +17,16 @@ def test_change_point_found_at_step() -> None:
     assert cp["p_value"] < 0.01
 
 
+def test_temporary_regime_found_by_circular_segmentation() -> None:
+    rng = np.random.default_rng(5)
+    n = np.full(25, 200)
+    rates = np.where((np.arange(25) >= 13) & (np.arange(25) < 18), 0.25, 0.01)
+    k = rng.binomial(200, rates)
+    cps = detect_change_points(k, n, seed=0)
+    assert [cp["index"] for cp in cps] == [13, 18]
+    assert cps[0]["rate_after"] > 0.2 and cps[1]["rate_after"] < 0.05
+
+
 def test_no_change_point_in_stable_series() -> None:
     rng = np.random.default_rng(2)
     n = np.full(30, 1000)

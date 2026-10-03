@@ -12,7 +12,7 @@ from reconsi.comparison.records import DATE, STATUS
 from reconsi.core.profiling import to_period
 from reconsi.core.serialization import frame_records
 from reconsi.core.types import RecordStatus
-from reconsi.temporal.changepoint import detect_change_points
+from reconsi.temporal.changepoint import detect_change_points, segments
 
 STATUSES = [s.value for s in RecordStatus if s is not RecordStatus.AMBIGUOUS]
 
@@ -49,29 +49,31 @@ def timeline(
         return None
     k = table["problems"].to_numpy(dtype=float)
     n = table["records"].to_numpy(dtype=float)
+    detected = detect_change_points(k, n, alpha=alpha, seed=seed)
+    # Anomalies are judged against the other periods of the same regime, so that a sustained
+    # level shift is reported once as a change point rather than as many anomalous days.
     anomalies: list[dict[str, Any]] = []
     total_k, total_n = k.sum(), n.sum()
-    for i in range(len(table)):
-        rest_n = total_n - n[i]
-        if rest_n <= 0 or k[i] < 5:
-            continue
-        baseline = (total_k - k[i]) / rest_n
-        rate = k[i] / n[i]
-        p = float(stats.binomtest(int(k[i]), int(n[i]), max(baseline, 1e-9), "greater").pvalue)
-        p_adj = min(1.0, p * len(table))
-        if p_adj < alpha and rate >= 2 * baseline:
-            anomalies.append(
-                {
-                    "period": table["period"].iloc[i],
-                    "problem_rate": float(rate),
-                    "baseline_rate": float(baseline),
-                    "p_value_bonferroni": p_adj,
-                }
-            )
-    change_points = [
-        {**cp, "period": table["period"].iloc[int(cp["index"])]}
-        for cp in detect_change_points(k, n, alpha=alpha, seed=seed)
-    ]
+    for lo, hi in segments(len(table), detected):
+        seg_k, seg_n = k[lo:hi].sum(), n[lo:hi].sum()
+        for i in range(lo, hi):
+            rest_n = seg_n - n[i]
+            if hi - lo < 3 or rest_n <= 0 or k[i] < 5:
+                continue
+            baseline = (seg_k - k[i]) / rest_n
+            rate = k[i] / n[i]
+            p = float(stats.binomtest(int(k[i]), int(n[i]), max(baseline, 1e-9), "greater").pvalue)
+            p_adj = min(1.0, p * len(table))
+            if p_adj < alpha and rate >= 2 * baseline:
+                anomalies.append(
+                    {
+                        "period": table["period"].iloc[i],
+                        "problem_rate": float(rate),
+                        "baseline_rate": float(baseline),
+                        "p_value_bonferroni": p_adj,
+                    }
+                )
+    change_points = [{**cp, "period": table["period"].iloc[int(cp["index"])]} for cp in detected]
     for cp in change_points:
         cp["message"] = (
             f"Problem rate changed significantly around {pd.Timestamp(cp['period']).date()} "
