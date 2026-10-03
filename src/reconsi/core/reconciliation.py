@@ -24,9 +24,12 @@ from reconsi.configuration.models import ReconConfig, SourceConfig
 from reconsi.core.dtypes import logical_type
 from reconsi.core.errors import ConfigurationError
 from reconsi.core.profiling import detect_date_column, detect_dimensions
+from reconsi.core.reproducibility import config_hash, git_state, new_run_id, package_versions
 from reconsi.core.result import ReconciliationResult
 from reconsi.core.types import DuplicateStrategy, RecordStatus
 from reconsi.findings.generate import generate_findings, recommendations
+from reconsi.fingerprints.fingerprint import fingerprint_source
+from reconsi.history.store import HistoryStore
 from reconsi.inputs.sources import TableSource, as_source
 from reconsi.keys.analysis import analyze_keys, duplicate_key_table
 from reconsi.rules.engine import RuleContext, RuleSet, overall_status
@@ -132,9 +135,16 @@ class Reconciliation:
     def run(self) -> ReconciliationResult:
         backend = make_backend(self.config.backend)
         try:
-            return _Run(self.config, self.left, self.right, backend).execute()
+            result = _Run(self.config, self.left, self.right, backend, self.base_dir).execute()
         finally:
             backend.close()
+        history = self.config.history
+        if history is not None and history.enabled:
+            path = Path(history.path)
+            if not path.is_absolute() and self.base_dir is not None:
+                path = self.base_dir / path
+            HistoryStore(path).record(result)
+        return result
 
 
 def reconcile(
@@ -153,12 +163,18 @@ def reconcile(
 
 class _Run:
     def __init__(
-        self, cfg: ReconConfig, left: TableSource, right: TableSource, backend: TableBackend
+        self,
+        cfg: ReconConfig,
+        left: TableSource,
+        right: TableSource,
+        backend: TableBackend,
+        base_dir: Path | None = None,
     ) -> None:
         self.cfg = cfg
         self.left = left
         self.right = right
         self.b = backend
+        self.base_dir = base_dir
         self.notes: list[dict[str, Any]] = []
         self.analyses: dict[str, Any] = {}
 
@@ -284,17 +300,23 @@ class _Run:
         )
         status = overall_status(rule_results)
         metadata = {
+            "run_id": new_run_id(),
             "reconsi_version": __version__,
             "python_version": platform.python_version(),
             "platform": platform.platform(terse=True),
+            "packages": package_versions(),
             "started_at": started.isoformat(),
             "duration_seconds": round(time.perf_counter() - t0, 4),
             "backend": b.name,
             "left": self.left.describe(),
             "right": self.right.describe(),
+            "left_fingerprint": fingerprint_source(self.left),
+            "right_fingerprint": fingerprint_source(self.right),
+            "config_hash": config_hash(cfg),
             "seed": cfg.seed,
             "date_column": date_column,
             "dimensions": dimensions,
+            **git_state(self.base_dir),
         }
         result = ReconciliationResult(
             config=cfg,
