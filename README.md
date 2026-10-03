@@ -3,6 +3,7 @@
 **Reconciliation Intelligence. Find out why your numbers don't match.**
 
 [![CI](https://github.com/Yashjindal11/reconsi/actions/workflows/ci.yml/badge.svg)](https://github.com/Yashjindal11/reconsi/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/reconsi)](https://pypi.org/project/reconsi/)
 ![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
