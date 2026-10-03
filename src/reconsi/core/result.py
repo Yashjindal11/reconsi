@@ -177,6 +177,12 @@ class ReconciliationResult:
         return out
 
     # ------------------------------------------------------------------ serialisation
+    def export(self, directory: str | Path, formats: Sequence[str] = ("csv",)) -> dict[str, Path]:
+        """Write evidence tables (missing_left.csv, value_mismatches.csv, ...) and result.json."""
+        from reconsi.reports.json_report import export_evidence
+
+        return export_evidence(self, directory, formats)
+
     def to_dict(self, sample_size: int | None = None) -> dict[str, Any]:
         n = self.config.sample_size if sample_size is None else sample_size
         return json_dict(
