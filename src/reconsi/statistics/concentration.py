@@ -32,6 +32,7 @@ def breakdown(records: pd.DataFrame, by: list[str]) -> pd.DataFrame:
             table[s] = 0
     table = table[STATUSES]
     table.insert(0, "records", table.sum(axis=1))
+    table.columns.name = None
     table["problems"] = table["records"] - table[RecordStatus.MATCHED.value]
     table["problem_rate"] = table["problems"] / table["records"]
     total_problems = table["problems"].sum()

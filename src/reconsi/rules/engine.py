@@ -201,6 +201,8 @@ class RuleSet:
         t = cfg.thresholds
         if t.max_missing_records is None and t.max_missing_percentage is None:
             rs.add(MetricRule("no_missing_records", "missing_records", max=0, source="default"))
+        # Records set aside as ambiguous were never compared, so they cannot count as reconciled.
+        rs.add(MetricRule("no_ambiguous_records", "ambiguous_records", max=0, source="default"))
         if t.max_missing_records is not None:
             rs.add(
                 MetricRule(
