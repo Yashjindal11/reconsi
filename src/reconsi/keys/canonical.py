@@ -32,10 +32,18 @@ def canonical_strings(series: pd.Series) -> pd.Series:
         else:
             out = pd.Series([repr(float(v)) for v in values], index=series.index)
     elif ltype in {"datetime", "datetime_tz"}:
+        stamps = [None if m else pd.Timestamp(v) for v, m in zip(series, mask, strict=True)]
+        # Date-only values render as YYYY-MM-DD so they match text dates from CSV files.
+        date_only = all(s is None or (s == s.normalize() and s.tzinfo is None) for s in stamps)
         out = pd.Series(
-            [None if m else pd.Timestamp(v).isoformat() for v, m in zip(series, mask, strict=True)],
+            [
+                None if s is None else (s.strftime("%Y-%m-%d") if date_only else s.isoformat())
+                for s in stamps
+            ],
             index=series.index,
         )
+    elif ltype == "date":
+        out = series.map(lambda v: None if v is None or v != v else v.isoformat())
     else:
         out = series.astype(str)
     result = out.astype(object)

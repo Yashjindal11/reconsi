@@ -182,6 +182,21 @@ def test_aggregation_reconciliation_spec_example() -> None:
     assert result.summary["left_rows"] == 5 and result.summary["left_records"] == 2
 
 
+def test_csv_text_vs_parquet_types_are_parsed(tmp_path: Path) -> None:
+    frame = pd.DataFrame(
+        {
+            "day": pd.to_datetime(["2026-01-01", "2026-01-02"]),
+            "amount": [1.5, 2.0],
+            "at": pd.to_datetime(["2026-01-01 10:00", "2026-01-02 11:00"]),
+        }
+    )
+    frame.to_csv(tmp_path / "a.csv", index=False)
+    frame.to_parquet(tmp_path / "b.parquet")
+    result = reconcile(tmp_path / "a.csv", tmp_path / "b.parquet", keys="day")
+    assert result.summary["matched_records"] == 2
+    assert result.columns["at"].kind == "datetime" and result.columns["at"].datatype_mismatch
+
+
 def test_files_end_to_end(tmp_path: Path, spec_pair: tuple[pd.DataFrame, pd.DataFrame]) -> None:
     a, b = spec_pair
     a.to_csv(tmp_path / "a.csv", index=False)

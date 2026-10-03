@@ -276,13 +276,16 @@ def _columns(f: _Builder, r: ReconciliationResult) -> None:
     for col, st in r.columns.items():
         d = st.to_dict()
         if st.datatype_mismatch:
+            failed = st.mismatch_types.get("datatype", 0)
             f.add(
                 "values",
-                Severity.WARNING,
+                Severity.WARNING if failed else Severity.INFO,
                 Evidence.OBSERVED,
                 f"Column {col} has different types ({st.left_dtype} vs {st.right_dtype})",
-                f"Compared as {st.kind}.",
-                f"Set an explicit type for {col} (columns.{col}.type) or align types upstream.",
+                f"Values were compared as {st.kind}; {_n(failed)} could not be interpreted as {st.kind}.",
+                f"Set an explicit type for {col} (columns.{col}.type) or align types upstream."
+                if failed
+                else None,
             )
         if st.mismatches:
             lo, hi = d["mismatch_percentage_ci95"]

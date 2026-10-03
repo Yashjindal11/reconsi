@@ -13,7 +13,9 @@ def test_canonical_strings_unify_numeric_representations() -> None:
     assert canonical_strings(pd.Series([1.5])).tolist() == ["1.5"]
     assert canonical_strings(pd.Series(["001", None])).tolist() == ["001", None]
     ts = canonical_strings(pd.Series(pd.to_datetime(["2026-01-01", None])))
-    assert ts.tolist() == ["2026-01-01T00:00:00", None]
+    assert ts.tolist() == ["2026-01-01", None]
+    ts = canonical_strings(pd.Series(pd.to_datetime(["2026-01-01 10:30", None])))
+    assert ts.tolist() == ["2026-01-01T10:30:00", None]
 
 
 def test_combined_key_composite_and_null() -> None:

@@ -56,8 +56,6 @@ class ColumnStatistics:
     def classification(self) -> str:
         if self.mismatches == 0:
             return "match_within_tolerance" if self.within_tolerance else "exact_match"
-        if self.datatype_mismatch:
-            return "datatype_mismatch"
         dominant = self.mismatch_types.most_common(1)[0][0]
         return f"{dominant}_mismatch"
 

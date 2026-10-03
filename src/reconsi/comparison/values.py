@@ -70,6 +70,10 @@ def resolve_kind(left: pd.Series, right: pd.Series, options: ColumnOptions) -> t
         return natural, False
     if natural == "empty":
         return "string", False
+    # Text on one side and a typed column on the other (typically CSV vs Parquet): parse the
+    # text as that type. Values that do not parse are reported as datatype mismatches.
+    if {lf, rf} & {"string"} and ({lf, rf} - {"string"}) <= {"numeric", "datetime", "boolean"}:
+        return next(iter({lf, rf} - {"string"})), True
     return "string", True
 
 

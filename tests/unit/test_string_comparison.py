@@ -65,10 +65,14 @@ def test_empty_string_is_not_null_unless_configured() -> None:
     assert cmp(["", None], [None, ""], empty_string_as_null=True).equal.all()
 
 
-def test_cross_type_values_compared_canonically_and_flagged() -> None:
+def test_cross_type_values_parsed_and_flagged() -> None:
     r = cmp([1, 2], ["1", "3"])
-    assert r.kind == "string" and r.datatype_mismatch
+    assert r.kind == "numeric" and r.datatype_mismatch
     assert r.equal.tolist() == [True, False]
+    r = cmp([1, 2], ["1", "two"])
+    assert r.mismatch_type.tolist() == [None, "datatype"]
+    r = cmp(["a", "b"], [1.5, None], type="string")
+    assert r.kind == "string" and r.datatype_mismatch
 
 
 def test_boolean_comparison() -> None:
